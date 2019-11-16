@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "timestepper.h"
 #include "clothsystem.h"
+#include "hairsystem.h"
 
 using namespace std;
 
@@ -52,6 +53,7 @@ GLuint program_color;
 GLuint program_light;
 
 ClothSystem* clothSystem;
+HairSystem* hairSystem;
 
 // Function implementations
 static void keyCallback(GLFWwindow* window, int key,
@@ -80,48 +82,6 @@ static void keyCallback(GLFWwindow* window, int key,
         freeSystem();
         initSystem();
         resetTime();
-        break;
-    }
-    case 'B':
-    {
-        cout << "Turn on breeze for cloth\n";
-        clothSystem -> addBreeze();
-        break;
-    }
-    case 'S':
-    {
-        cout << "Turn on smooth shading for cloth\n";
-        clothSystem -> addSmooth();
-        break;
-    }
-    case 'W':
-    {
-        cout << "Turn on wireframe\n";
-        clothSystem -> addWireframe();
-        break;
-    }
-    case 264:
-    {
-        cout << "Move down the cloth\n";
-        clothSystem -> moveDown();
-        break;
-    }
-    case 265:
-    {
-        cout << "Move up the cloth\n";
-        clothSystem -> moveUp();
-        break;
-    }
-    case 262:
-    {
-        cout << "Move right the cloth\n";
-        clothSystem -> moveRight();
-        break;
-    }
-    case 263:
-    {
-        cout << "Move left the cloth\n";
-        clothSystem -> moveLeft();
         break;
     }
     default:
@@ -223,11 +183,13 @@ void initSystem()
     }
 
     clothSystem = new ClothSystem();
+    hairSystem = new HairSystem();
 }
 
 void freeSystem() {
     delete timeStepper; timeStepper = nullptr;
     delete clothSystem; clothSystem = nullptr;
+    delete hairSystem; hairSystem = nullptr;
 }
 
 void resetTime() {
@@ -236,13 +198,12 @@ void resetTime() {
     start_tick = glfwGetTimerValue();
 }
 
-// TODO: To add external forces like wind or turbulances,
-//       update the external forces before each time step
 void stepSystem()
 {
     // step until simulated_s has caught up with elapsed_s.
     while (simulated_s < elapsed_s) {
         timeStepper->takeStep(clothSystem, h);
+        timeStepper->takeStep(hairSystem, h);
         simulated_s += h;
     }
 }
@@ -254,7 +215,8 @@ void drawSystem()
     // particle systems need for drawing themselves
     GLProgram gl(program_light, program_color, &camera);
     gl.updateLight(LIGHT_POS, LIGHT_COLOR.xyz()); // once per frame
-    clothSystem->draw(gl);
+//    clothSystem->draw(gl);
+    hairSystem->draw(gl);
 
     // set uniforms for floor
     gl.updateMaterial(FLOOR_COLOR);

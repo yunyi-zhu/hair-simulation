@@ -4,7 +4,6 @@
 
 void ForwardEuler::takeStep(ParticleSystem* particleSystem, float stepSize)
 {
-    // TODO: See handout 3.1 
     // cout << "use Euler" << endl;
     std::vector<Vector3f> oldState = particleSystem -> getState();
     std::vector<Vector3f> f = particleSystem -> evalF(oldState);
@@ -17,7 +16,6 @@ void ForwardEuler::takeStep(ParticleSystem* particleSystem, float stepSize)
 
 void Trapezoidal::takeStep(ParticleSystem* particleSystem, float stepSize)
 {
-    //TODO: See handout 3.1 
     // cout << "use Trapezoidal" << endl;
 	std::vector<Vector3f> oldState = particleSystem -> getState();
 	std::vector<Vector3f> f0 = particleSystem -> evalF(oldState);
