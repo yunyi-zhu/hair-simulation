@@ -25,7 +25,11 @@ const int H = 8; // number of curves on a hair
 const float UNIT_R = 0.1f; // radius of a curve or square
 const float UNIT_H = 0.05f;
 const float STR_L = 0.1f;
+const float CORE_L = UNIT_H;
+const float BEND_L = 0.707 * UNIT_R; // sqrt(2)/2
 const float STR_K = 50.0f;
+const float CORE_K = 10.0f;
+const float BEND_K = 30.0f;
 
 using namespace std;
 
@@ -47,6 +51,13 @@ HairSystem::HairSystem()
     m_vVecState.push_back(Vector3f::ZERO);
   }
 
+  // cores, stored in state but not rendered
+  for (int i = 0; i < H; i++) {
+    Vector3f sub_origin(0, i*UNIT_H, 0);
+    m_vVecState.push_back(sub_origin + Vector3f(UNIT_R * 0.5, 0, UNIT_R * 0.5));
+    m_vVecState.push_back(Vector3f::ZERO);
+  }
+
   // structural springs
   for (int i = 0; i < H; i++) {
     for (int j = 0; j < C-1; j++) {
@@ -54,6 +65,19 @@ HairSystem::HairSystem()
     }
     if ( i < H-1 ) {
       springs.push_back(Vector4f(indexOf(i, C-1), indexOf(i+1, 0), UNIT_H, STR_K));
+    }
+  }
+
+  // core springs
+  for (int i = 0; i < H-1; i++) {
+    springs.push_back(Vector4f(coreIndexOf(i), coreIndexOf(i+1), CORE_L, CORE_K));
+  }
+
+  // bending springs
+  for (int i = 0; i < H; i++) {
+    int core_index = coreIndexOf(i);
+    for (int j = 0; j < C; j++) {
+      springs.push_back(Vector4f(core_index, indexOf(i, j), BEND_L, BEND_K));
     }
   }
 
@@ -107,7 +131,7 @@ void HairSystem::draw(GLProgram& gl)
   VertexRecorder rec;
 
   // draw springs as lines;
-  for (int i = 0; i < springs.size(); i++) {
+  for (int i = 0; i < H * C; i++) {
     Vector4f sp = springs[i];
     rec.record(state[2*sp[0]], HAIR_COLOR);
     rec.record(state[2*sp[1]], HAIR_COLOR);
@@ -124,3 +148,6 @@ int HairSystem::indexOf(int i, int j)
   return i * C + j;
 }
 
+int HairSystem::coreIndexOf(int i) {
+  return i + H * C;
+}

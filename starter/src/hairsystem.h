@@ -18,6 +18,7 @@ public:
 
   // get index
   int indexOf(int i, int j);
+  int coreIndexOf(int i);
 
   // inherits
   // std::vector<Vector3f> m_vVecState;
