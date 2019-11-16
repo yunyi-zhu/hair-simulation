@@ -54,8 +54,6 @@ list (APPEND A3_SRC
   src/clothsystem.cpp
   src/timestepper.cpp
   src/particlesystem.cpp
-  src/pendulumsystem.cpp
-  src/simplesystem.cpp
 )
 list (APPEND A3_HEADER
   src/gl.h
@@ -65,8 +63,6 @@ list (APPEND A3_HEADER
   src/clothsystem.h
   src/timestepper.h
   src/particlesystem.h
-  src/pendulumsystem.h
-  src/simplesystem.h
 )
 
 add_executable(a3 ${A3_SRC} ${A3_HEADER})

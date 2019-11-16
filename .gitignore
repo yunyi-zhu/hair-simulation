@@ -1,2 +1,5 @@
 .DS_Store
 .idea/
+starter/build/
+*.cpp.o
+*.out
