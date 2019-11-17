@@ -11,7 +11,6 @@
 #include "starter3_util.h"
 #include "camera.h"
 #include "timestepper.h"
-#include "clothsystem.h"
 #include "hairsystem.h"
 
 using namespace std;
@@ -52,7 +51,6 @@ bool gMousePressed = false;
 GLuint program_color;
 GLuint program_light;
 
-ClothSystem* clothSystem;
 HairSystem* hairSystem;
 
 // Function implementations
@@ -182,13 +180,11 @@ void initSystem()
     default: printf("Unrecognized integrator\n"); exit(-1);
     }
 
-    clothSystem = new ClothSystem();
     hairSystem = new HairSystem();
 }
 
 void freeSystem() {
     delete timeStepper; timeStepper = nullptr;
-    delete clothSystem; clothSystem = nullptr;
     delete hairSystem; hairSystem = nullptr;
 }
 
@@ -202,7 +198,6 @@ void stepSystem()
 {
     // step until simulated_s has caught up with elapsed_s.
     while (simulated_s < elapsed_s) {
-        timeStepper->takeStep(clothSystem, h);
         timeStepper->takeStep(hairSystem, h);
         simulated_s += h;
     }
@@ -215,7 +210,6 @@ void drawSystem()
     // particle systems need for drawing themselves
     GLProgram gl(program_light, program_color, &camera);
     gl.updateLight(LIGHT_POS, LIGHT_COLOR.xyz()); // once per frame
-//    clothSystem->draw(gl);
     hairSystem->draw(gl);
 
     // set uniforms for floor
@@ -224,8 +218,6 @@ void drawSystem()
     // draw floor
     drawQuad(50.0f);
 }
-
-//-------------------------------------------------------------------
 
 void initRendering()
 {

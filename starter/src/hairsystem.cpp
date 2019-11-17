@@ -4,18 +4,6 @@
 #include <string>
 #include <iostream>
 
-// your system should at least contain 8x8 particles.
-
-
-const float ks = 1.5;
-const float unitL = 0.5;
-const float rls = unitL;
-const float rlshear = 1.414 * unitL;
-const float rlf = 2 * unitL;
-
-const float kd = 0.3;
-const float m = 0.01;
-
 const float GRAVITY = 9.8f;
 const float K_DRAG = 0.03f;
 const float M = 0.01f;
