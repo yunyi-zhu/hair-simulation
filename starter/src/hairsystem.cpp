@@ -121,8 +121,6 @@ void HairSystem::draw(GLProgram& gl)
   gl.updateMaterial(HAIR_COLOR);
   vector<Vector3f> state = getState();
 
-  drawSphere(1.0f, 2, 2);
-
   gl.disableLighting();
   gl.updateModelMatrix(Matrix4f::identity());
   VertexRecorder rec;

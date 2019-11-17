@@ -7,17 +7,33 @@
 
 using namespace std;
 
+
+const float HEAD_R = 1.0f; // head radius
+const int DENSITY = 6; // number of hairs each round
+
 HairGroup::HairGroup() {
-  hairs.push_back(HairSystem(Vector3f(0,0,0), 10));
-  hairs.push_back(HairSystem(Vector3f(1,0,0), 20));
-  hairs.push_back(HairSystem(Vector3f(0,1,0), 30));
-  hairs.push_back(HairSystem(Vector3f(0,0,1), 3));
+
+  for (int i = 0; i < DENSITY; i++) {
+    for (int j = 0; j < DENSITY; j++) {
+      float lat = ( M_PI / 4.0f ) / DENSITY * i;
+      float lon = ( M_PI * 2.0f ) / DENSITY * j;
+
+      float x = HEAD_R * cos(lat) * cos(lon);
+      float y = HEAD_R * sin(lat);
+      float z = HEAD_R * cos(lat) * sin(lon);
+
+      hairs.push_back(HairSystem(Vector3f(x, y, z), 15));
+    }
+  }
 }
 
 void HairGroup::draw(GLProgram& gl) {
+
   for (int i = 0; i < hairs.size(); i++) {
     hairs[i].draw(gl);
   }
+  gl.updateModelMatrix(Matrix4f::identity());
+  drawSphere(HEAD_R, 30, 30);
 }
 
 void HairGroup::step(TimeStepper* timeStepper, float h) {
