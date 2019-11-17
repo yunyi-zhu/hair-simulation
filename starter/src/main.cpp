@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "timestepper.h"
 #include "hairsystem.h"
+#include "hairGroup.h"
 
 using namespace std;
 
@@ -51,7 +52,8 @@ bool gMousePressed = false;
 GLuint program_color;
 GLuint program_light;
 
-HairSystem* hairSystem;
+//HairSystem* hairSystem;
+HairGroup* hairGroup;
 
 // Function implementations
 static void keyCallback(GLFWwindow* window, int key,
@@ -180,12 +182,14 @@ void initSystem()
     default: printf("Unrecognized integrator\n"); exit(-1);
     }
 
-    hairSystem = new HairSystem();
+//    hairSystem = new HairSystem();
+    hairGroup = new HairGroup();
 }
 
 void freeSystem() {
     delete timeStepper; timeStepper = nullptr;
-    delete hairSystem; hairSystem = nullptr;
+//    delete hairSystem; hairSystem = nullptr;
+    delete hairGroup; hairGroup = nullptr;
 }
 
 void resetTime() {
@@ -198,7 +202,8 @@ void stepSystem()
 {
     // step until simulated_s has caught up with elapsed_s.
     while (simulated_s < elapsed_s) {
-        timeStepper->takeStep(hairSystem, h);
+//        timeStepper->takeStep(hairSystem, h);
+        hairGroup->step(timeStepper, h);
         simulated_s += h;
     }
 }
@@ -210,7 +215,8 @@ void drawSystem()
     // particle systems need for drawing themselves
     GLProgram gl(program_light, program_color, &camera);
     gl.updateLight(LIGHT_POS, LIGHT_COLOR.xyz()); // once per frame
-    hairSystem->draw(gl);
+//    hairSystem->draw(gl);
+    hairGroup->draw(gl);
 
     // set uniforms for floor
     gl.updateMaterial(FLOOR_COLOR);

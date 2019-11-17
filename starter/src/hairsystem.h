@@ -2,7 +2,6 @@
 #define HAIRSYSTEM_H
 
 #include <vector>
-
 #include "particlesystem.h"
 
 class HairSystem : public ParticleSystem
@@ -22,7 +21,6 @@ public:
 
   // inherits
   // std::vector<Vector3f> m_vVecState;
-
 private:
   // private variables
   // Spring:
