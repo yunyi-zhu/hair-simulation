@@ -1,0 +1,21 @@
+[x] Add starter
+[x] Init setup
+[x] Simulate Hair Structure
+[x] Simulate Hair Bones
+[x] CHECKPOINT 1: A HAIR IS BORN!
+
+[x] Add Hair Group
+[x] Hair Spawn
+[ ] Thicker hair (bbb)
+[ ] Mid-point spring refactor
+[ ] draw hair with B-spline (bbb)
+[ ] parallelize evalF
+[ ] CHECKPOINT 2: A BUNCH OF HAIRS!
+
+[ ] Hair-head collision
+[ ] Hair-hair collision
+[ ] CHECKPOINT 3: REAL!
+
+OPTIONAL:
+[ ] Better rendering
+[ ] GUI sliders / hairstyles
