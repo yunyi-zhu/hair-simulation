@@ -28,7 +28,7 @@ const float STR_L = 0.1f;
 const float CORE_L = UNIT_H;
 const float BEND_L = 0.707 * UNIT_R; // sqrt(2)/2
 const float STR_K = 50.0f;
-const float CORE_K = 10.0f;
+const float CORE_K = 60.0f;
 const float BEND_K = 30.0f;
 
 using namespace std;
@@ -88,7 +88,8 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
 {
   std::vector<Vector3f> f;
 
-  // gravity and drag
+
+  // gravity and drag for structural points
   for (int i = 0; i < H; i++) {
     for (int j = 0; j < C; j++) {
       f.push_back(state[2 * indexOf(i, j) + 1]);
@@ -96,6 +97,13 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
       Vector3f drag = -K_DRAG * state[2 * indexOf(i, j) + 1] / M;
       f.push_back(gravity + drag);
     }
+  }
+
+  // no gravity for core points
+  for (int i = 0; i < H; i++) {
+    f.push_back(state[2 * coreIndexOf(i) + 1]);
+    Vector3f drag = -K_DRAG * state[2 * coreIndexOf(i) + 1] / M;
+    f.push_back(drag);
   }
 
   // springs
@@ -131,13 +139,13 @@ void HairSystem::draw(GLProgram& gl)
   VertexRecorder rec;
 
   // draw springs as lines;
-  for (int i = 0; i < H * C; i++) {
+  for (int i = 0; i < H * C - 1; i++) {
     Vector4f sp = springs[i];
     rec.record(state[2*sp[0]], HAIR_COLOR);
     rec.record(state[2*sp[1]], HAIR_COLOR);
   }
 
-  glLineWidth(3.0f);
+  glLineWidth(6.0f);
   rec.draw(GL_LINES);
   gl.enableLighting(); // reset to default lighting model
 
