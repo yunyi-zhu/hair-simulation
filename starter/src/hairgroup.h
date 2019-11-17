@@ -8,7 +8,6 @@ class HairGroup {
 public:
   HairGroup();
 
-  std::vector<Vector3f> hairRoots;
   std::vector<HairSystem> hairs;
 
    void draw(GLProgram& ctx);

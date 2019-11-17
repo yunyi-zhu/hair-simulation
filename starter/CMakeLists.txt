@@ -54,7 +54,7 @@ list (APPEND A3_SRC
   src/timestepper.cpp
   src/particlesystem.cpp
   src/hairsystem.cpp
-  src/hairGroup.cpp
+  src/hairgroup.cpp
 )
 list (APPEND A3_HEADER
   src/gl.h
@@ -64,7 +64,7 @@ list (APPEND A3_HEADER
   src/timestepper.h
   src/particlesystem.h
   src/hairsystem.h
-  src/hairGroup.h
+  src/hairgroup.h
 )
 
 add_executable(a3 ${A3_SRC} ${A3_HEADER})

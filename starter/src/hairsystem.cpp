@@ -5,11 +5,10 @@
 #include <iostream>
 
 const float GRAVITY = 9.8f;
-const float K_DRAG = 0.03f;
+const float K_DRAG = 0.015f;
 const float M = 0.01f;
 
 const int C = 4; // number of points on a curve
-const int H = 8; // number of curves on a hair
 const float UNIT_R = 0.1f; // radius of a curve or square
 const float UNIT_H = 0.05f;
 const float STR_L = 0.1f;
@@ -21,11 +20,12 @@ const float BEND_K = 30.0f;
 
 using namespace std;
 
-HairSystem::HairSystem()
+HairSystem::HairSystem(Vector3f origin, int length)
 {
-  Vector3f Origin(0, 0, 0);
+  H = length;
+
   for (int i = 0; i < H; i++) {
-    Vector3f sub_origin(0, i*UNIT_H, 0);
+    Vector3f sub_origin = origin + Vector3f(0, i*UNIT_H, 0);
     m_vVecState.push_back(sub_origin);
     m_vVecState.push_back(Vector3f::ZERO);
 
@@ -41,7 +41,7 @@ HairSystem::HairSystem()
 
   // cores, stored in state but not rendered
   for (int i = 0; i < H; i++) {
-    Vector3f sub_origin(0, i*UNIT_H, 0);
+    Vector3f sub_origin = origin + Vector3f(0, i*UNIT_H, 0);
     m_vVecState.push_back(sub_origin + Vector3f(UNIT_R * 0.5, 0, UNIT_R * 0.5));
     m_vVecState.push_back(Vector3f::ZERO);
   }
@@ -87,9 +87,10 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
     }
   }
 
-  // no gravity for core points
+  // no gravity for core points [ almost copied code from above ]
   for (int i = 0; i < H; i++) {
     f.push_back(state[2 * coreIndexOf(i) + 1]);
+    Vector3f gravity(0.0, -GRAVITY, 0.0);
     Vector3f drag = -K_DRAG * state[2 * coreIndexOf(i) + 1] / M;
     f.push_back(drag);
   }
