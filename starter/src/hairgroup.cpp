@@ -52,6 +52,30 @@ HairGroup::HairGroup() {
           symhairs.push_back(SymHair(origin, follow_hairs, weights));
         }
       }
+
+      if (i != DENSITY_V-1 && j != DENSITY_H-1) {
+        for (int k1 = 1; k1 < DENSITY_SYM; k1++) {
+          for (int k2 = 1; k2 < DENSITY_SYM; k2++) {
+            Vector3f origin = Vector3f::ZERO;
+            vector<HairSystem*> follow_hairs{
+              &hairs[indexOf(i, j)],
+              &hairs[indexOf(i, j+1)],
+              &hairs[indexOf(i+1, j)],
+              &hairs[indexOf(i+1, j+1)]
+            };
+            float weight_right_1 = (1.0 * k1) / DENSITY_SYM;
+            float weight_right_2 = (1.0 * k1) / DENSITY_SYM;
+            vector<float> weights{
+              (1 - weight_right_1) * (1 - weight_right_2),
+              weight_right_1 * (1 - weight_right_2),
+              (1 - weight_right_1) * weight_right_2,
+              weight_right_1 * weight_right_2
+            };
+
+            symhairs.push_back(SymHair(origin, follow_hairs, weights));
+          }
+        }
+      }
     }
   }
 }
