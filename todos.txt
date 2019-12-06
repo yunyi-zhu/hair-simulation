@@ -6,9 +6,9 @@
 
 [x] Add Hair Group
 [x] Hair Spawn
-[ ] Thicker hair (bbb)
-[ ] Mid-point spring refactor
-[ ] draw hair with B-spline (bbb)
+[ ] Thicker hair
+[x] Mid-point spring refactor
+[x] draw hair with B-spline (bbb)
 [ ] parallelize evalF
 [ ] CHECKPOINT 2: A BUNCH OF HAIRS!
 

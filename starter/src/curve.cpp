@@ -25,20 +25,7 @@ Curve evalBezier(const vector< Vector3f >& P, unsigned steps)
 		exit(0);
 	}
 
-	// TODO:
-	// You should implement this function so that it returns a Curve
-	// (e.g., a vector< CurvePoint >).  The variable "steps" tells you
-	// the number of points to generate on each piece of the spline.
-	// At least, that's how the sample solution is implemented and how
-	// the SWP files are written.  But you are free to interpret this
-	// variable however you want, so long as you can control the
-	// "resolution" of the discretized spline curve with it.
-
-	// Also note that you may assume that all Bezier curves that you
-	// receive have G1 continuity.  Otherwise, the TNB will not be
-	// be defined at points where this does not hold.
-
-    int num_of_seg = ((int) P.size() - 1) / 3;
+	int num_of_seg = ((int) P.size() - 1) / 3;
 	Curve R;
 
 	for (int i = 0; i < num_of_seg; i++)
@@ -89,11 +76,7 @@ Curve evalBspline(const vector< Vector3f >& P, unsigned steps)
 		exit(0);
 	}
 
-	// TODO:
-	// It is suggested that you implement this function by changing
-	// basis from B-spline to Bezier.  That way, you can just call
-	// your evalBezier function.
-
+	// change of basis from Bezier
 	Matrix4f Bez = Matrix4f(1.0, -3.0, 3.0, -1.0, 
 							0.0, 3.0, -6.0, 3.0, 
 							0.0, 0.0, 3.0, -3.0, 
@@ -115,7 +98,7 @@ Curve evalBspline(const vector< Vector3f >& P, unsigned steps)
 	    Matrix4f G = Matrix4f(P0, P1, P2, P3);
 	    Matrix4f GBez = G * Bsp * Bez.inverse();
         
-        // makes sure total number of points is 4 + 3*n for input into evalBezier
+	    // makes sure total number of points is 4 + 3*n for input into evalBezier
 	    if (i == 0) {
 	    	for (int j = 0; j < 4; ++j) {
 	    		Vector3f bezPoint = GBez.getCol(j).xyz();
