@@ -14,29 +14,40 @@ const int DENSITY_V = 4; // number of rounds
 const int DENSITY_SYM = 5; // number of symhairs between two hairs
 const float LAT_OFFSET = 0.1; // more realistic look of top hair
 
+static Vector3f positionFromLatLon(float lat, float lon) {
+  float x = HEAD_R * cos(lat) * cos(lon);
+  float y = HEAD_R * sin(lat);
+  float z = HEAD_R * cos(lat) * sin(lon);
+  return Vector3f(x, y, z);
+}
+
 HairGroup::HairGroup() {
+  vector<float> lats;
+  vector<float> lons;
+
   for (int i = 0; i < DENSITY_V; i++) {
     for (int j = 0; j < DENSITY_H; j++) {
       float lat = ( M_PI / 2.0f ) / DENSITY_V * (i + 1) - LAT_OFFSET;
       float lon = ( M_PI ) / DENSITY_H * j;
 
-      float x = HEAD_R * cos(lat) * cos(lon);
-      float y = HEAD_R * sin(lat);
-      float z = HEAD_R * cos(lat) * sin(lon);
-
-      hairs.push_back(HairSystem(Vector3f(x, y, z), 16));
+      hairs.push_back(HairSystem(positionFromLatLon(lat, lon), 16));
+      lats.push_back(lat);
+      lons.push_back(lon);
     }
   }
 
-  // add symhairs
+  // hair interpolation
   for (int i = 0; i < DENSITY_V; i++) {
     for (int j = 0; j < DENSITY_H; j++) {
       if (i != DENSITY_V-1) {
         for (int k = 1; k < DENSITY_SYM; k++) {
-          Vector3f origin = Vector3f::ZERO;
           vector<HairSystem*> follow_hairs{&hairs[indexOf(i, j)], &hairs[indexOf(i+1, j)]};
           float weight_right = (1.0 * k) / DENSITY_SYM;
           vector<float> weights{ 1 - weight_right, weight_right };
+
+          float lat = lats[indexOf(i, j)] * ( 1 - weight_right ) + lats[indexOf(i+1, j)] * weight_right;
+          float lon = lons[indexOf(i, j)] * ( 1 - weight_right ) + lons[indexOf(i+1, j)] * weight_right;
+          Vector3f origin = positionFromLatLon(lat, lon);
 
           symhairs.push_back(SymHair(origin, follow_hairs, weights));
         }
@@ -44,10 +55,13 @@ HairGroup::HairGroup() {
 
       if (j != DENSITY_H-1) {
         for (int k = 1; k < DENSITY_SYM; k++) {
-          Vector3f origin = Vector3f::ZERO;
           vector<HairSystem*> follow_hairs{&hairs[indexOf(i, j)], &hairs[indexOf(i, j+1)]};
           float weight_right = (1.0 * k) / DENSITY_SYM;
           vector<float> weights{ 1 - weight_right, weight_right };
+
+          float lat = lats[indexOf(i, j)] * ( 1 - weight_right ) + lats[indexOf(i, j+1)] * weight_right;
+          float lon = lons[indexOf(i, j)] * ( 1 - weight_right ) + lons[indexOf(i, j+1)] * weight_right;
+          Vector3f origin = positionFromLatLon(lat, lon);
 
           symhairs.push_back(SymHair(origin, follow_hairs, weights));
         }
@@ -56,7 +70,6 @@ HairGroup::HairGroup() {
       if (i != DENSITY_V-1 && j != DENSITY_H-1) {
         for (int k1 = 1; k1 < DENSITY_SYM; k1++) {
           for (int k2 = 1; k2 < DENSITY_SYM; k2++) {
-            Vector3f origin = Vector3f::ZERO;
             vector<HairSystem*> follow_hairs{
               &hairs[indexOf(i, j)],
               &hairs[indexOf(i, j+1)],
@@ -71,6 +84,17 @@ HairGroup::HairGroup() {
               (1 - weight_right_1) * weight_right_2,
               weight_right_1 * weight_right_2
             };
+
+            float lat = weights[0] * lats[indexOf(i, j)] +
+                    weights[1] * lats[indexOf(i, j+1)] +
+                    weights[2] * lats[indexOf(i+1, j)] +
+                    weights[3] * lats[indexOf(i+1, j+1)];
+
+            float lon = weights[0] * lons[indexOf(i, j)] +
+                        weights[1] * lons[indexOf(i, j+1)] +
+                        weights[2] * lons[indexOf(i+1, j)] +
+                        weights[3] * lons[indexOf(i+1, j+1)];
+            Vector3f origin = positionFromLatLon(lat, lon);
 
             symhairs.push_back(SymHair(origin, follow_hairs, weights));
           }

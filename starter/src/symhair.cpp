@@ -8,10 +8,10 @@
 
 using namespace std;
 
-SymHair::SymHair(Vector3f origin,
+SymHair::SymHair(Vector3f origin_input,
         vector<HairSystem*> hair_inputs,
         vector<float> weight_inputs) {
-  origin = origin;
+  origin = origin_input;
   hairs = hair_inputs;
   weights = weight_inputs;
 }
@@ -25,23 +25,18 @@ void SymHair::draw(GLProgram& gl) {
   VertexRecorder rec;
 
   vector<Vector3f> points;
-//  points.push_back(origin);
-//  points.push_back(origin);
-//  points.push_back(origin);
-//  points.push_back(origin);
-// TODO: use origin to be more precise
+  points.push_back(origin);
+  points.push_back(origin);
+  points.push_back(origin);
+  points.push_back(origin);
+
   int hair_len = (hairs[0]->getState()).size() / 2;
-  for (int i = 0; i < hair_len; i++) {
+  for (int i = 1; i < hair_len; i++) {
     Vector3f point = Vector3f::ZERO;
     for (int j = 0; j < hairs.size(); j++) {
       point += hairs[j]->getState()[2 * i] * weights[j];
     }
     points.push_back(point);
-    if (i == 0) {
-      points.push_back(point);
-      points.push_back(point);
-      points.push_back(point);
-    }
   }
 
   Curve curve = evalBspline(points, 10);
