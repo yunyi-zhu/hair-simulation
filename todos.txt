@@ -6,13 +6,13 @@
 
 [x] Add Hair Group
 [x] Hair Spawn
-[ ] Thicker hair
+[ ] Interpolate hair
 [x] Mid-point spring refactor
 [x] draw hair with B-spline (bbb)
 [ ] parallelize evalF
 [ ] CHECKPOINT 2: A BUNCH OF HAIRS!
 
-[ ] Hair-head collision
+[x] Hair-head collision
 [ ] Hair-hair collision
 [ ] CHECKPOINT 3: REAL!
 

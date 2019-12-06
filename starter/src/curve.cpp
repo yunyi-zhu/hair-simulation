@@ -88,7 +88,7 @@ Curve evalBspline(const vector< Vector3f >& P, unsigned steps)
 									0.0, 0.0, 0.0, 1.0);
 	Matrix4f product = Bsp * (Bez.inverse());
 
-    vector<Vector3f> bezPoints;
+	vector<Vector3f> bezPoints;
 
 	for (int i = 0; i < (int)P.size() - 3; ++i) {
 	    Vector4f P0(P[i],   0);

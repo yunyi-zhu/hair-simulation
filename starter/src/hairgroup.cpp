@@ -9,15 +9,15 @@ using namespace std;
 
 
 const float HEAD_R = 1.0f; // head radius
-const int DENSITY_H = 6; // number of hairs each round
-const int DENSITY_V = 1; // number of rounds
+const int DENSITY_H = 8; // number of hairs each round
+const int DENSITY_V = 6; // number of rounds
 
 HairGroup::HairGroup() {
 
   for (int i = 0; i < DENSITY_V; i++) {
     for (int j = 0; j < DENSITY_H; j++) {
       float offset = 0;
-      float lat = ( M_PI / 4.0f ) / DENSITY_V * i;
+      float lat = ( M_PI / 2.0f ) / DENSITY_V * (i + 1);
       float lon = ( M_PI ) / DENSITY_H * j + offset;
 
       float x = HEAD_R * cos(lat) * cos(lon);
@@ -30,11 +30,12 @@ HairGroup::HairGroup() {
 }
 
 void HairGroup::draw(GLProgram& gl) {
+  gl.updateModelMatrix(Matrix4f::identity());
   for (int i = 0; i < hairs.size(); i++) {
     hairs[i].draw(gl);
   }
   gl.updateModelMatrix(Matrix4f::identity());
-//  drawSphere(HEAD_R, 30, 30);
+  drawSphere(HEAD_R, 30, 30);
 }
 
 void HairGroup::step(TimeStepper* timeStepper, float h) {

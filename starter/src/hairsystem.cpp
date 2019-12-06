@@ -8,24 +8,41 @@
 const float GRAVITY = 9.8f;
 const float K_DRAG = 0.015f;
 const float M = 0.01f;
+const float COLLISION_RES = 1000.0f;
 
 const float UNIT_H = 0.5f;
 const float HORI_DELTA = 0.3f;
 const float VERTI_DELTA = 0.2f;
 
 const float CORE_L = UNIT_H;
-const float SUPPORT_L = 0.707 * UNIT_H; // sqrt(2)/2
+const float SUPPORT_L = 0.5 * UNIT_H;
 
 const float CORE_K = 60.0f;
 const float SUPPORT_K = 30.0f;
 
 using namespace std;
 
+static Vector3f headCollisionForce(Vector3f point) {
+  float length = point.abs();
+  if ( length < 1.1) {
+    float forceAbs = COLLISION_RES;
+    return forceAbs * point.normalized();
+  } else {
+    return Vector3f::ZERO;
+  }
+}
+
 HairSystem::HairSystem(Vector3f origin, int length)
 {
   H = length;
+
   for (int i = 0; i < H; i++) {
-    Vector3f sub_origin = origin + Vector3f(pow(-1, i) * HORI_DELTA, i*UNIT_H, -pow(-1, i) * VERTI_DELTA);
+    Vector3f sub_origin;
+    if (i == 0) {
+      sub_origin = origin;
+    } else {
+      sub_origin = origin + Vector3f(pow(-1, i) * HORI_DELTA, i*UNIT_H, -pow(-1, i) * VERTI_DELTA);
+    }
     m_vVecState.push_back(sub_origin);
     m_vVecState.push_back(Vector3f::ZERO);
   }
@@ -55,7 +72,8 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
     f.push_back(state[2 * i + 1]);
     Vector3f gravity(0.0, -GRAVITY, 0.0);
     Vector3f drag = -K_DRAG * state[2 * i + 1] / M;
-    f.push_back(gravity + drag);
+    Vector3f collision = headCollisionForce(state[2 * i]);
+    f.push_back(gravity + drag + collision);
   }
 
   // springs
@@ -89,6 +107,9 @@ void HairSystem::draw(GLProgram& gl)
   VertexRecorder rec;
 
   vector<Vector3f> points;
+  points.push_back(m_vVecState[0]);
+  points.push_back(m_vVecState[0]);
+  points.push_back(m_vVecState[0]);
   for (int i = 0; i < H; i++) {
     points.push_back(state[2 * i]);
   }
