@@ -1,6 +1,7 @@
 #include "hairsystem.h"
 #include "camera.h"
 #include "vertexrecorder.h"
+#include "curve.h"
 #include <string>
 #include <iostream>
 
@@ -8,67 +9,40 @@ const float GRAVITY = 9.8f;
 const float K_DRAG = 0.015f;
 const float M = 0.01f;
 
-const int C = 4; // number of points on a curve
-const float UNIT_R = 0.1f; // radius of a curve or square
-const float UNIT_H = 0.05f;
-const float STR_L = 0.1f;
+const float UNIT_H = 0.5f;
+const float HORI_DELTA = 0.3f;
+const float VERTI_DELTA = 0.2f;
+
 const float CORE_L = UNIT_H;
-const float BEND_L = 0.707 * UNIT_R; // sqrt(2)/2
-const float STR_K = 50.0f;
+const float SUPPORT_L = 0.707 * UNIT_H; // sqrt(2)/2
+
 const float CORE_K = 60.0f;
-const float BEND_K = 30.0f;
+const float SUPPORT_K = 30.0f;
 
 using namespace std;
 
 HairSystem::HairSystem(Vector3f origin, int length)
 {
   H = length;
-
   for (int i = 0; i < H; i++) {
-    Vector3f sub_origin = origin + Vector3f(0, i*UNIT_H, 0);
+    Vector3f sub_origin = origin + Vector3f(pow(-1, i) * HORI_DELTA, i*UNIT_H, -pow(-1, i) * VERTI_DELTA);
     m_vVecState.push_back(sub_origin);
     m_vVecState.push_back(Vector3f::ZERO);
-
-    m_vVecState.push_back(sub_origin + Vector3f(UNIT_R, 0, 0));
-    m_vVecState.push_back(Vector3f::ZERO);
-
-    m_vVecState.push_back(sub_origin + Vector3f(UNIT_R, 0, UNIT_R));
-    m_vVecState.push_back(Vector3f::ZERO);
-
-    m_vVecState.push_back(sub_origin + Vector3f(0, 0, UNIT_R));
-    m_vVecState.push_back(Vector3f::ZERO);
-  }
-
-  // cores, stored in state but not rendered
-  for (int i = 0; i < H; i++) {
-    Vector3f sub_origin = origin + Vector3f(0, i*UNIT_H, 0);
-    m_vVecState.push_back(sub_origin + Vector3f(UNIT_R * 0.5, 0, UNIT_R * 0.5));
-    m_vVecState.push_back(Vector3f::ZERO);
-  }
-
-  // structural springs
-  for (int i = 0; i < H; i++) {
-    for (int j = 0; j < C-1; j++) {
-      springs.push_back(Vector4f(indexOf(i, j), indexOf(i, j+1), STR_L, STR_K));
-    }
-    if ( i < H-1 ) {
-      springs.push_back(Vector4f(indexOf(i, C-1), indexOf(i+1, 0), UNIT_H, STR_K));
-    }
   }
 
   // core springs
-  for (int i = 0; i < H-1; i++) {
-    springs.push_back(Vector4f(coreIndexOf(i), coreIndexOf(i+1), CORE_L, CORE_K));
+  for (int i = 0; i < H - 1; i++) {
+    springs.push_back(Vector4f(i, i+1, CORE_L, CORE_K));
   }
 
-  // bending springs
-  for (int i = 0; i < H; i++) {
-    int core_index = coreIndexOf(i);
-    for (int j = 0; j < C; j++) {
-      springs.push_back(Vector4f(core_index, indexOf(i, j), BEND_L, BEND_K));
-    }
+  // support springs
+  for (int i = 0; i < H - 2; i++) {
+    springs.push_back(Vector4f(i, i+2, SUPPORT_L, SUPPORT_K));
   }
 
+  for (int i = 0; i < H - 3; i++) {
+    springs.push_back(Vector4f(i, i+3, 3 * UNIT_H, SUPPORT_K));
+  }
   fixedPtIndex.push_back(0);
 }
 
@@ -76,23 +50,12 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
 {
   std::vector<Vector3f> f;
 
-
   // gravity and drag for structural points
   for (int i = 0; i < H; i++) {
-    for (int j = 0; j < C; j++) {
-      f.push_back(state[2 * indexOf(i, j) + 1]);
-      Vector3f gravity(0.0, -GRAVITY, 0.0);
-      Vector3f drag = -K_DRAG * state[2 * indexOf(i, j) + 1] / M;
-      f.push_back(gravity + drag);
-    }
-  }
-
-  // no gravity for core points [ almost copied code from above ]
-  for (int i = 0; i < H; i++) {
-    f.push_back(state[2 * coreIndexOf(i) + 1]);
+    f.push_back(state[2 * i + 1]);
     Vector3f gravity(0.0, -GRAVITY, 0.0);
-    Vector3f drag = -K_DRAG * state[2 * coreIndexOf(i) + 1] / M;
-    f.push_back(drag);
+    Vector3f drag = -K_DRAG * state[2 * i + 1] / M;
+    f.push_back(gravity + drag);
   }
 
   // springs
@@ -125,24 +88,19 @@ void HairSystem::draw(GLProgram& gl)
   gl.updateModelMatrix(Matrix4f::identity());
   VertexRecorder rec;
 
-  // draw springs as lines;
-  for (int i = 0; i < H * C - 1; i++) {
-    Vector4f sp = springs[i];
-    rec.record(state[2*sp[0]], HAIR_COLOR);
-    rec.record(state[2*sp[1]], HAIR_COLOR);
+  vector<Vector3f> points;
+  for (int i = 0; i < H; i++) {
+    points.push_back(state[2 * i]);
   }
 
+  Curve curve = evalBspline(points, 10);
+  // record curve, can change color
+  const Vector3f WHITE(1, 1, 1);
+  for (int i = 0; i < (int)curve.size() - 1; ++i) {
+    rec.record_poscolor(curve[i].V, WHITE);
+    rec.record_poscolor(curve[i + 1].V, WHITE);
+  }
   glLineWidth(6.0f);
   rec.draw(GL_LINES);
   gl.enableLighting(); // reset to default lighting model
-
-}
-
-int HairSystem::indexOf(int i, int j)
-{
-  return i * C + j;
-}
-
-int HairSystem::coreIndexOf(int i) {
-  return i + H * C;
 }

@@ -55,6 +55,7 @@ list (APPEND A3_SRC
   src/particlesystem.cpp
   src/hairsystem.cpp
   src/hairgroup.cpp
+  src/curve.cpp
 )
 list (APPEND A3_HEADER
   src/gl.h
@@ -65,6 +66,7 @@ list (APPEND A3_HEADER
   src/particlesystem.h
   src/hairsystem.h
   src/hairgroup.h
+  src/curve.h
 )
 
 add_executable(a3 ${A3_SRC} ${A3_HEADER})

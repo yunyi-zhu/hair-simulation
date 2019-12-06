@@ -10,7 +10,7 @@ using namespace std;
 
 const float HEAD_R = 1.0f; // head radius
 const int DENSITY_H = 6; // number of hairs each round
-const int DENSITY_V = 3; // number of rounds
+const int DENSITY_V = 1; // number of rounds
 
 HairGroup::HairGroup() {
 
@@ -24,13 +24,12 @@ HairGroup::HairGroup() {
       float y = HEAD_R * sin(lat);
       float z = HEAD_R * cos(lat) * sin(lon);
 
-      hairs.push_back(HairSystem(Vector3f(x, y, z), 15));
+      hairs.push_back(HairSystem(Vector3f(x, y, z), 16));
     }
   }
 }
 
 void HairGroup::draw(GLProgram& gl) {
-
   for (int i = 0; i < hairs.size(); i++) {
     hairs[i].draw(gl);
   }

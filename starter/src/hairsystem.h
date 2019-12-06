@@ -16,7 +16,6 @@ public:
   // draw is called once per frame
   void draw(GLProgram& ctx);
 
-
   // inherits
   // std::vector<Vector3f> m_vVecState;
 private:
@@ -32,9 +31,6 @@ private:
   std::vector<Vector4f> springs;
   // the indices of the points where they are fixed
   std::vector<int> fixedPtIndex;
-  // helper
-  int indexOf(int i, int j);
-  int coreIndexOf(int i);
 };
 
 
