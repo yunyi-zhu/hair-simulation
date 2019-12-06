@@ -9,12 +9,12 @@ using namespace std;
 
 class SymHair {
 public:
-  SymHair(Vector3f origin, vector<HairSystem> hairs, vector<float> weights);
+  SymHair(Vector3f origin, vector<HairSystem *> hairs, vector<float> weights);
   void draw(GLProgram& ctx);
 
 private:
   Vector3f origin;
-  vector<HairSystem> hairs;
+  vector<HairSystem*> hairs;
   vector<float> weights;
 };
 
