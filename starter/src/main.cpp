@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iostream>
 #include <vector>
+#include <nanogui/nanogui.h>
 
 #include "vertexrecorder.h"
 #include "starter3_util.h"
@@ -15,128 +16,124 @@
 #include "hairgroup.h"
 
 using namespace std;
+namespace ng = ::nanogui;
 
-namespace
-{
-
+namespace {
 // Declarations of functions whose implementations occur later.
-void initSystem();
-void stepSystem();
-void drawSystem();
-void freeSystem();
-void resetTime();
+  void initSystem();
 
-void initRendering();
-void drawAxis();
+  void stepSystem();
+
+  void drawSystem();
+
+  void freeSystem();
+
+  void resetTime();
+
+  void initRendering();
+
+  void drawAxis();
 
 // Some constants
-const Vector3f LIGHT_POS(3.0f, 3.0f, 5.0f);
-const Vector3f LIGHT_COLOR(120.0f, 120.0f, 120.0f);
-const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
+  const Vector3f LIGHT_POS(3.0f, 3.0f, 5.0f);
+  const Vector3f LIGHT_COLOR(120.0f, 120.0f, 120.0f);
+  const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
 
 // time keeping
 // current "tick" (e.g. clock number of processor)
-uint64_t start_tick;
+  uint64_t start_tick;
 // number of seconds since start of program
-double elapsed_s;
+  double elapsed_s;
 // number of seconds simulated
-double simulated_s;
+  double simulated_s;
 
 // Globals here.
-TimeStepper* timeStepper;
-float h;
-char integrator;
+  TimeStepper *timeStepper;
+  float h;
+  char integrator;
+  GLFWwindow *window;
+  ng::Screen *screen;
 
-Camera camera;
-bool gMousePressed = false;
-GLuint program_color;
-GLuint program_light;
+  Camera camera;
+  bool gMousePressed = false;
+  GLuint program_color;
+  GLuint program_light;
 
-HairGroup* hairGroup;
+  HairGroup *hairGroup;
 
 // Function implementations
-static void keyCallback(GLFWwindow* window, int key,
-    int scancode, int action, int mods)
-{
+  static void keyCallback(GLFWwindow *window, int key,
+                          int scancode, int action, int mods) {
     if (action == GLFW_RELEASE) { // only handle PRESS and REPEAT
-        return;
+      return;
     }
 
     // Special keys (arrows, CTRL, ...) are documented
     // here: http://www.glfw.org/docs/latest/group__keys.html
     switch (key) {
-    case GLFW_KEY_ESCAPE: // Escape key
+      case GLFW_KEY_ESCAPE: // Escape key
         exit(0);
         break;
-    case ' ':
-    {
+      case ' ': {
         Matrix4f eye = Matrix4f::identity();
         camera.SetRotation(eye);
         camera.SetCenter(Vector3f(0, 0, 0));
         break;
-    }
-    case 'R':
-    {
+      }
+      case 'R': {
         cout << "Resetting simulation\n";
         freeSystem();
         initSystem();
         resetTime();
         break;
-    }
-    default:
+      }
+      default:
         cout << "Unhandled key press " << key << "." << endl;
     }
-}
+  }
 
-static void mouseCallback(GLFWwindow* window, int button, int action, int mods)
-{
+  static void mouseCallback(GLFWwindow *window, int button, int action, int mods) {
     double xd, yd;
     glfwGetCursorPos(window, &xd, &yd);
-    int x = (int)xd;
-    int y = (int)yd;
+    int x = (int) xd;
+    int y = (int) yd;
 
     int lstate = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
     int rstate = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
     int mstate = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
     if (lstate == GLFW_PRESS) {
-        gMousePressed = true;
-        camera.MouseClick(Camera::LEFT, x, y);
+      gMousePressed = true;
+      camera.MouseClick(Camera::LEFT, x, y);
+    } else if (rstate == GLFW_PRESS) {
+      gMousePressed = true;
+      camera.MouseClick(Camera::RIGHT, x, y);
+    } else if (mstate == GLFW_PRESS) {
+      gMousePressed = true;
+      camera.MouseClick(Camera::MIDDLE, x, y);
+    } else {
+      gMousePressed = true;
+      camera.MouseRelease(x, y);
+      gMousePressed = false;
     }
-    else if (rstate == GLFW_PRESS) {
-        gMousePressed = true;
-        camera.MouseClick(Camera::RIGHT, x, y);
-    }
-    else if (mstate == GLFW_PRESS) {
-        gMousePressed = true;
-        camera.MouseClick(Camera::MIDDLE, x, y);
-    }
-    else {
-        gMousePressed = true;
-        camera.MouseRelease(x, y);
-        gMousePressed = false;
-    }
-}
+  }
 
-static void motionCallback(GLFWwindow* window, double x, double y)
-{
+  static void motionCallback(GLFWwindow *window, double x, double y) {
     if (!gMousePressed) {
-        return;
+      return;
     }
-    camera.MouseDrag((int)x, (int)y);
-}
+    camera.MouseDrag((int) x, (int) y);
+  }
 
-void setViewport(GLFWwindow* window)
-{
+  void setViewport(GLFWwindow *window) {
     int w, h;
     glfwGetFramebufferSize(window, &w, &h);
 
     camera.SetDimensions(w, h);
     camera.SetViewport(0, 0, w, h);
     camera.ApplyViewport();
-}
+  }
 
-void drawAxis()
-{
+  void drawAxis() {
     glUseProgram(program_color);
     Matrix4f M = Matrix4f::translation(camera.GetCenter()).inverse();
     camera.SetUniforms(program_color, M);
@@ -168,45 +165,52 @@ void drawAxis()
 
     glLineWidth(3);
     recorder.draw(GL_LINES);
-}
+  }
 
 
 // initialize your particle systems
-void initSystem()
-{
+  void initSystem() {
     switch (integrator) {
-    case 'e': timeStepper = new ForwardEuler(); break;
-    case 't': timeStepper = new Trapezoidal(); break;
-    case 'r': timeStepper = new RK4(); break;
-    default: printf("Unrecognized integrator\n"); exit(-1);
+      case 'e':
+        timeStepper = new ForwardEuler();
+        break;
+      case 't':
+        timeStepper = new Trapezoidal();
+        break;
+      case 'r':
+        timeStepper = new RK4();
+        break;
+      default:
+        printf("Unrecognized integrator\n");
+        exit(-1);
     }
 
     hairGroup = new HairGroup();
-}
+  }
 
-void freeSystem() {
-    delete timeStepper; timeStepper = nullptr;
-    delete hairGroup; hairGroup = nullptr;
-}
+  void freeSystem() {
+    delete timeStepper;
+    timeStepper = nullptr;
+    delete hairGroup;
+    hairGroup = nullptr;
+  }
 
-void resetTime() {
+  void resetTime() {
     elapsed_s = 0;
     simulated_s = 0;
     start_tick = glfwGetTimerValue();
-}
+  }
 
-void stepSystem()
-{
+  void stepSystem() {
     // step until simulated_s has caught up with elapsed_s.
     while (simulated_s < elapsed_s) {
-        hairGroup->step(timeStepper, h);
-        simulated_s += h;
+      hairGroup->step(timeStepper, h);
+      simulated_s += h;
     }
-}
+  }
 
 // Draw the current particle positions
-void drawSystem()
-{
+  void drawSystem() {
     // GLProgram wraps up all object that
     // particle systems need for drawing themselves
     GLProgram gl(program_light, program_color, &camera);
@@ -217,18 +221,197 @@ void drawSystem()
     gl.updateMaterial(FLOOR_COLOR);
     gl.updateModelMatrix(Matrix4f::translation(0, -5.0f, 0));
     // draw floor
-    drawQuad(50.0f);
-}
+//    drawQuad(50.0f);
+  }
 
-void initRendering()
-{
+  void initRendering() {
     // Clear to black
     glClearColor(0, 0, 0, 1);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
+
+/*
+   initializes a simple NanoGUI-based UI
+   must call freeGUI() when done.
+
+   This function implements a simple GUI with three sliders
+   for each joint. You won't have to touch it, but feel free
+   to add your own features.
+
+   The GUI is drawn in the same window as the main application.
+   Any mouse and keyboard events, we first send to the GUI. If the
+   GUI didn't handle the event, we forward it to the event handler
+   functions above.
+
+   Once initialized, the GUI is drawn in the main loop of the application
+   The GUI is drawn in the same window as the main application.
+   Any mouse and keyboard events, we first send to the GUI. If the
+   GUI didn't handle the event, we forward it to the event handler
+   functions above.
+
+   Once initialized, the GUI is drawn in the main loop of the
+   application.
+*/
+  void initGUI(GLFWwindow *glfwwin) {
+    // Create a nanogui screen and pass the glfw pointer to initialize
+    const int FONTSZ = 14;
+    const int ROWH = 18;
+
+    screen = new ng::Screen();
+    screen->initialize(glfwwin, false);
+
+    ng::Window *window = nullptr;
+    ng::Widget *animator = nullptr;
+
+      window = new ng::Window(screen, "Animator 1");
+      window->setPosition(ng::Vector2i(10));
+      window->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
+      window->setFixedHeight(800);
+
+      // Scrollpanel is broken. Slider drag mouse events not transformed properly
+      // ng::VScrollPanel* vspanel = new ng::VScrollPanel(window);
+      // vspanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
+      // vspanel->setFixedHeight(600);
+
+      animator = new ng::Widget(window);
+      animator->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
+
+      // sample of a button
+      ng::Button *btn = new ng::Button(animator, "Take Screenshot");
+//      btn->setCallback([glfwwin]() {
+//        screencapture(glfwwin);
+//      });
+
+      ng::Widget *jointpanel = new ng::Widget(animator);
+      jointpanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 2, 0));
+
+      ng::Label *label = new ng::Label(jointpanel, "MEOW");
+      label->setFontSize(FONTSZ);
+
+      for (int dim = 0; dim < 3; ++dim) {
+
+        ng::Widget *panel = new ng::Widget(jointpanel);
+        panel->setLayout(new ng::BoxLayout(ng::Orientation::Horizontal, ng::Alignment::Middle, 3, 10));
+
+        char buff[80];
+        switch (dim) {
+          case 0:
+            sprintf(buff, "%s", "x");
+            break;
+          case 1:
+            sprintf(buff, "%s", "y");
+            break;
+          case 2:
+            sprintf(buff, "%s", "z");
+            break;
+        }
+
+        ng::Label *label = new ng::Label(panel, buff);
+        label->setFontSize(FONTSZ);
+        label->setFixedSize(ng::Vector2i(10, ROWH));
+
+        ng::Slider *slider = new ng::Slider(panel);
+        slider->setFixedWidth(160);
+        slider->setFixedHeight(ROWH);
+        slider->setValue(0.5);
+        slider->setFinalCallback([&](float value) {
+          //cout << "Final slider value: " << (int)(value * 100) << endl;
+        });
+
+        ng::TextBox *textBox = new ng::TextBox(panel);
+        textBox->setFixedSize(ng::Vector2i(40, ROWH));
+//        slider->setCallback([textBox, i, dim](float value) {
+//          char buff[80];
+//          g_jointangles[i][dim] = (value - 0.5f) * 2 * (float) M_PI;
+//          sprintf(buff, "%.2f", g_jointangles[i][dim]);
+//          textBox->setValue(buff);
+//
+//          if (skeleton) {
+//            // update animation
+//            skeleton->setJointTransform(i, g_jointangles[i].x(), g_jointangles[i].y(), g_jointangles[i].z());
+//            updateMesh();
+//          }
+//        });
+
+        //textBox->setFixedSize(ng::Vector2i(40, ROWH));
+        textBox->setFontSize(FONTSZ);
+        textBox->setAlignment(ng::TextBox::Alignment::Right);
+
+        // update text box and global vars.
+        slider->notifyCallback();
+      }
+
+    screen->performLayout();
+
+    // nanoGUI wants to handle events.
+    // We forward GLFW events to nanoGUI first. If nanoGUI didn't handle
+    // the event, we pass it to the handler routine.
+    glfwSetCursorPosCallback(glfwwin,
+                             [](GLFWwindow *window, double x, double y) {
+                               if (gMousePressed) {
+                                 // sticky mouse gestures
+                                 motionCallback(window, x, y);
+                                 return;
+                               }
+                               if (screen->cursorPosCallbackEvent(x, y)) {
+                                 return;
+                               }
+                               motionCallback(window, x, y);
+                             }
+    );
+
+    glfwSetMouseButtonCallback(glfwwin,
+                               [](GLFWwindow *window, int button, int action, int modifiers) {
+                                 if (screen->mouseButtonCallbackEvent(button, action, modifiers)) {
+                                   return;
+                                 }
+                                 mouseCallback(window, button, action, modifiers);
+                               }
+    );
+
+    glfwSetKeyCallback(glfwwin,
+                       [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+                         if (screen->keyCallbackEvent(key, scancode, action, mods)) {
+                           return;
+                         }
+                         keyCallback(window, key, scancode, action, mods);
+                       }
+    );
+
+    glfwSetCharCallback(glfwwin,
+                        [](GLFWwindow *, unsigned int codepoint) {
+                          screen->charCallbackEvent(codepoint);
+                        }
+    );
+
+    glfwSetDropCallback(glfwwin,
+                        [](GLFWwindow *, int count, const char **filenames) {
+                          screen->dropCallbackEvent(count, filenames);
+                        }
+    );
+
+    glfwSetScrollCallback(glfwwin,
+                          [](GLFWwindow *, double x, double y) {
+                            screen->scrollCallbackEvent(x, y);
+                          }
+    );
+
+    glfwSetFramebufferSizeCallback(glfwwin,
+                                   [](GLFWwindow *, int width, int height) {
+                                     screen->resizeCallbackEvent(width, height);
+                                   }
+    );
+  }
+
+  void freeGUI() {
+    delete screen;
+    screen = nullptr;
+  }
 }
-}
+
+
 
 // Main routine.
 // Set up OpenGL, define the callbacks and start the main loop
@@ -253,6 +436,7 @@ int main(int argc, char** argv)
 
 
     GLFWwindow* window = createOpenGLWindow(1024, 1024, "Assignment 3");
+    initGUI(window);
 
     // setup the event handlers
     glfwSetKeyCallback(window, keyCallback);
@@ -289,6 +473,10 @@ int main(int argc, char** argv)
         // Clear the rendering window
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // draw nanogui
+        screen->drawContents();
+        screen->drawWidgets();
+
         setViewport(window);
 
         if (gMousePressed) {
@@ -309,6 +497,7 @@ int main(int argc, char** argv)
         glfwPollEvents();
     }
 
+    freeGUI();
     // All OpenGL resource that are created with
     // glGen* or glCreate* must be freed.
     glDeleteProgram(program_color);

@@ -40,6 +40,17 @@ if (NOT APPLE)
   SOURCE_GROUP(GLEW FILES 3rd_party/glew/src/glew.c)
 endif()
 
+# NanoGui
+set(NANOGUI_BUILD_EXAMPLE OFF)
+set(NANOGUI_BUILD_SHARED OFF)
+set(NANOGUI_BUILD_PYTHON OFF)
+set(NANOGUI_USE_GLAD ${NANOGUI_USE_GLAD_DEFAULT})
+#set(NANOGUI_USE_GLAD OFF)
+set(NANOGUI_INSTALL OFF)
+
+add_subdirectory(3rd_party/nanogui)
+list(APPEND A3_LIBS nanogui)
+list(APPEND A3_INCLUDES 3rd_party/nanogui/include 3rd_party/nanogui/ext/eigen 3rd_party/nanogui/ext/nanovg/src)
 
 # vecmath include directory
 include_directories(vecmath/include)

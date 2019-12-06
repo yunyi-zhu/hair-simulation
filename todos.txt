@@ -20,7 +20,4 @@ OPTIONAL:
 [ ] Better rendering
 [ ] GUI sliders / hairstyles
 
-
-
 ** NOTES **
-parallelize 烦死我了气死了！！！！！！！！

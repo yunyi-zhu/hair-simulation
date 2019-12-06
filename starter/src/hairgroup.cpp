@@ -12,7 +12,7 @@ const float HEAD_R = 1.0f; // head radius
 const int DENSITY_H = 6; // number of hairs each round
 const int DENSITY_V = 4; // number of rounds
 const int DENSITY_SYM = 5; // number of symhairs between two hairs
-const float LAT_OFFSET = 0.1; // more realistic look of top hair
+const float LAT_OFFSET = 0.05; // more realistic look of top hair
 
 static Vector3f positionFromLatLon(float lat, float lon) {
   float x = HEAD_R * cos(lat) * cos(lon);
