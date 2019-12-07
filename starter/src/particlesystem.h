@@ -59,7 +59,7 @@ struct GLProgram {
     void enableLighting();
     void disableLighting();
 
-private:
+public:
     // member variables
     uint32_t active_program;
     uint32_t program_light;

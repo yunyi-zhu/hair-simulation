@@ -1,10 +1,12 @@
 #ifndef CURVE_H
 #define CURVE_H
 
+#include "tuple.h"
 #include <vecmath.h>
 #include <vector>
 #include <cstring>
 #include <iostream>
+#include "vertexrecorder.h"
 
 // The CurvePoint object stores information about a point on a curve
 // after it has been tesselated: the vertex (V), the tangent (T), the
@@ -20,7 +22,6 @@ struct CurvePoint
 
 // This is just a handy shortcut.
 typedef std::vector< CurvePoint > Curve;
-
 
 ////////////////////////////////////////////////////////////////////////////
 // The following two functions take an array of control points (stored
@@ -38,5 +39,13 @@ Curve evalBezier( const std::vector< Vector3f >& P, unsigned steps );
 
 // Bsplines only require that there are at least 4 control points.
 Curve evalBspline( const std::vector< Vector3f >& P, unsigned steps );
+
+Curve evalCircle(float radius, unsigned steps);
+
+// Record the curve vertices
+void recordCurve(const Curve& curve, VertexRecorder* recorder);
+
+// Record the curve's associated coordinate frames
+void recordCurveFrames( const Curve& curve, VertexRecorder* recorder, float framesize);
 
 #endif
