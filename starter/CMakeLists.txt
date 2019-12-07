@@ -67,6 +67,7 @@ list (APPEND A3_SRC
   src/hairsystem.cpp
   src/hairgroup.cpp
   src/curve.cpp
+  src/surf.cpp
   src/symhair.cpp
 )
 list (APPEND A3_HEADER
@@ -79,6 +80,8 @@ list (APPEND A3_HEADER
   src/hairsystem.h
   src/hairgroup.h
   src/curve.h
+  src/surf.h
+  src/tuple.h
   src/symhair.h
 )
 

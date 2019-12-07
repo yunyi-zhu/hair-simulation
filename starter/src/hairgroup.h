@@ -12,8 +12,9 @@ public:
   std::vector<HairSystem> hairs;
   std::vector<SymHair> symhairs;
 
-  void draw(GLProgram& ctx);
-  void step(TimeStepper* timeStepper, float h);
+   void draw(GLProgram& ctx, VertexRecorder rec);
+   void step(TimeStepper* timeStepper, float h);
+   
 private:
   int indexOf(int h, int w);
 };

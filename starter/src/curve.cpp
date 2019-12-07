@@ -60,6 +60,9 @@ Curve evalBezier(const vector< Vector3f >& P, unsigned steps)
 				N = Vector3f::cross(R[R.size() - 1].B, T).normalized();
 				B = Vector3f::cross(T, N).normalized();
 			}
+			// cout << N[0] << " " << N[1] << " " << N[2] << endl;
+			// cout << B[0] << " " << B[1] << " " << B[2] << endl;
+
 			CurvePoint p = {V, T, N, B};
 			R.push_back(p);
 		}
@@ -111,5 +114,80 @@ Curve evalBspline(const vector< Vector3f >& P, unsigned steps)
 	    }
 	}
 	return evalBezier(bezPoints, steps);
+}
+
+Curve evalCircle(float radius, unsigned steps)
+{
+	// Preallocate a curve with steps+1 CurvePoints
+	Curve R(steps + 1);
+
+	// Fill it in counterclockwise
+	for (unsigned i = 0; i <= steps; ++i)
+	{
+		// step from 0 to 2pi
+		float t = 2.0f * c_pi * float(i) / steps;
+
+		// Initialize position
+		// We're pivoting counterclockwise around the y-axis
+		R[i].V = radius * Vector3f(cos(t), sin(t), 0);
+
+		// Tangent vector is first derivative
+		R[i].T = Vector3f(-sin(t), cos(t), 0);
+
+		// Normal vector is second derivative
+		R[i].N = Vector3f(-cos(t), -sin(t), 0);
+
+		// Finally, binormal is facing up.
+		R[i].B = Vector3f(0, 0, 1);
+	}
+
+	return R;
+}
+
+void recordCurve(const Curve& curve, VertexRecorder* recorder)
+{
+	const Vector3f HAIRCOLOR(0.6, 0.3, 0.0);
+	for (int i = 0; i < (int)curve.size() - 1; ++i)
+	{
+		recorder->record_poscolor(curve[i].V, HAIRCOLOR);
+		recorder->record_poscolor(curve[i + 1].V, HAIRCOLOR);
+	}
+}
+
+void recordCurveFrames(const Curve& curve, VertexRecorder* recorder, float framesize)
+{
+	Matrix4f T;
+	const Vector3f RED(1, 0, 0);
+	const Vector3f GREEN(0, 1, 0);
+	const Vector3f BLUE(0, 0, 1);
+	
+	const Vector4f ORGN(0, 0, 0, 1);
+	const Vector4f AXISX(framesize, 0, 0, 1);
+	const Vector4f AXISY(0, framesize, 0, 1);
+	const Vector4f AXISZ(0, 0, framesize, 1);
+
+	for (int i = 0; i < (int)curve.size(); ++i)
+	{
+		T.setCol(0, Vector4f(curve[i].N, 0));
+		T.setCol(1, Vector4f(curve[i].B, 0));
+		T.setCol(2, Vector4f(curve[i].T, 0));
+		T.setCol(3, Vector4f(curve[i].V, 1));
+ 
+		// Transform orthogonal frames into model space
+		Vector4f MORGN  = T * ORGN;
+		Vector4f MAXISX = T * AXISX;
+		Vector4f MAXISY = T * AXISY;
+		Vector4f MAXISZ = T * AXISZ;
+
+		// Record in model space
+		recorder->record_poscolor(MORGN.xyz(), RED);
+		recorder->record_poscolor(MAXISX.xyz(), RED);
+
+		recorder->record_poscolor(MORGN.xyz(), GREEN);
+		recorder->record_poscolor(MAXISY.xyz(), GREEN);
+
+		recorder->record_poscolor(MORGN.xyz(), BLUE);
+		recorder->record_poscolor(MAXISZ.xyz(), BLUE);
+	}
 }
 
