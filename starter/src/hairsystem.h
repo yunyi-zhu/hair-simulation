@@ -31,7 +31,7 @@ public:
   std::vector<Vector3f> evalF(std::vector<Vector3f> state) override;
 
   // draw is called once per frame
-  void draw(GLProgram& ctx, VertexRecorder curveRec);
+  void draw(GLProgram& ctx, VertexRecorder curveRec, VertexRecorder surfaceRec);
 
   void setHairCurve(float l_input) {
     for (int i = 2*H - 3; i < 3*H - 6; i++) {

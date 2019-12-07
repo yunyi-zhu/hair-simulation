@@ -95,13 +95,14 @@ Surface makeGenCyl(const Curve &profile, const Curve &sweep )
     return surface;
 }
 
-void recordSurface(const Surface &surface, VertexRecorder* recorder) {
-	const Vector3f HAIRCOLOR(0.6f, 0.3f, 0.0f);
+void recordSurface(const Surface &surface, VertexRecorder* recorder, Vector3f FCOLOR) {
+	// const Vector3f HAIRCOLOR(0.6f, 0.3f, 0.0f);
+    Vector3f COLOR(0.75, 0.52, 0.76);
     for (int i=0; i<(int)surface.VF.size() - 1; i++)
     {
-		recorder->record(surface.VV[surface.VF[i][0]], surface.VN[surface.VF[i][0]], HAIRCOLOR);
-		recorder->record(surface.VV[surface.VF[i][1]], surface.VN[surface.VF[i][1]], HAIRCOLOR);
-		recorder->record(surface.VV[surface.VF[i][2]], surface.VN[surface.VF[i][2]], HAIRCOLOR);
+		recorder->record(surface.VV[surface.VF[i][0]], surface.VN[surface.VF[i][0]], COLOR);
+		recorder->record(surface.VV[surface.VF[i][1]], surface.VN[surface.VF[i][1]], COLOR);
+		recorder->record(surface.VV[surface.VF[i][2]], surface.VN[surface.VF[i][2]], COLOR);
     }
 }
 

@@ -35,7 +35,7 @@ namespace {
   void drawAxis();
 
 // Some constants
-const Vector3f LIGHT_POS(3.0f, 3.0f, -5.0f);
+const Vector3f LIGHT_POS(3.0f, 3.0f, 5.0f);
 const Vector3f LIGHT_COLOR(120.0f, 120.0f, 120.0f);
 const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
 
@@ -58,7 +58,8 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
   bool gMousePressed = false;
   GLuint program_color;
   GLuint program_light;
-  VertexRecorder rec;
+  VertexRecorder curveRec;
+  VertexRecorder surfaceRec;
 
   HairGroup *hairGroup;
 
@@ -216,13 +217,7 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     // particle systems need for drawing themselves
     GLProgram gl(program_light, program_color, &camera);
     gl.updateLight(LIGHT_POS, LIGHT_COLOR.xyz()); // once per frame
-    hairGroup->draw(gl, rec);
-
-    // set uniforms for floor
-    gl.updateMaterial(FLOOR_COLOR);
-    gl.updateModelMatrix(Matrix4f::translation(0, -5.0f, 0));
-    // draw floor
-//    drawQuad(50.0f);
+    hairGroup->draw(gl, curveRec, surfaceRec);
   }
 
   void initRendering() {
@@ -301,7 +296,6 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     btn->setCallback([]() {
       hairGroup->startWind();
     });
-
 
 
     //============================
@@ -405,6 +399,10 @@ int main(int argc, char** argv)
 
     GLFWwindow* window = createOpenGLWindow(1024, 1024, "Hair Simulation");
     initGUI(window);
+    // setup the event handlers
+    // glfwSetKeyCallback(window, keyCallback);
+    // glfwSetMouseButtonCallback(window, mouseCallback);
+    // glfwSetCursorPosCallback(window, motionCallback);
     initRendering();
 
     // The program object controls the programmable parts

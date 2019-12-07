@@ -104,23 +104,24 @@ HairGroup::HairGroup() {
   }
 }
 
-void HairGroup::draw(GLProgram& gl, VertexRecorder rec) {
-  gl.updateModelMatrix(Matrix4f::identity());
-  int hairs_size = hairs.size();
-  int symhairs_size = symhairs.size();
-  for (int i = 0; i < hairs_size; i++) {
-    hairs[i].draw(gl, rec);
+void HairGroup::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder surfaceRec) {
+  const Vector3f HAIR_COLOR(1.0f, 1.0f, 1.0f);
+  // cout << CORE_HAIR_COLOR[0] << endl;
+  gl.updateMaterial(CORE_HAIR_COLOR);
+
+  for (int i = 0; i < hairs.size(); i++) {
+    hairs[i].draw(gl, curveRec, surfaceRec);
   }
 
-  for (int i = 0; i < symhairs_size; i++) {
-    symhairs[i].draw(gl, rec);
+  gl.updateMaterial(CORE_HAIR_COLOR);
+  for (int i = 0; i < symhairs.size(); i++) {
+    symhairs[i].draw(gl, curveRec, surfaceRec);
   }
 
   gl.enableLighting();
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  const Vector3f HEAD_COLOR(0.8f, 0.8f, 0.8f);
-  gl.updateMaterial(HEAD_COLOR);
   gl.updateModelMatrix(Matrix4f::identity());
+  const Vector3f HEAD_COLOR(0.9f, 0.9f, 0.9f);
+  gl.updateMaterial(HEAD_COLOR);
   drawSphere(HEAD_R, 30, 30);
 }
 
