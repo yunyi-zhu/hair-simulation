@@ -16,18 +16,10 @@ SymHair::SymHair(Vector3f origin_input,
   weights = weight_inputs;
 }
 
-void SymHair::draw(GLProgram& gl, VertexRecorder curveRec) {
-//  const Vector3f HAIR_COLOR(0.9f, 0.9f, 0.9f);
-//  gl.updateMaterial(HAIR_COLOR);
-
+void SymHair::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder surfaceRec) {
   gl.disableLighting();
   gl.updateModelMatrix(Matrix4f::identity());
-//  VertexRecorder rec;
-
   vector<Vector3f> points;
-//  points.push_back(origin);
-//  points.push_back(origin);
-//  points.push_back(origin);
   points.push_back(origin);
 
   int hair_len = (hairs[0]->getState()).size() / 2;
@@ -39,29 +31,16 @@ void SymHair::draw(GLProgram& gl, VertexRecorder curveRec) {
     points.push_back(point);
   }
 
-  Curve curve = evalBspline(points, 10);
+  Curve curve = evalBspline(points, 8);
   recordCurve(curve, &curveRec);
-
   glLineWidth(1.0f);
-  curveRec.draw(GL_LINES);
+  // curveRec.draw(GL_LINES);
 
-  Curve profile = evalCircle(0.01, 20);
+  Curve profile = evalCircle(0.01, 6);
   Surface surface = makeGenCyl(profile, curve);
+  recordSurface(surface, &surfaceRec, Vector3f(0.75f, 0.6f, 0.75f));
 
-  recordSurface(surface, &curveRec);
-
-  // // recordSurface(surface, &surfaceRec);
-  // // recordNormals(surface, &surfaceNormals, 0.1f);
-
-  // gl.camera->SetUniforms(gl.program_light);
-  gl.updateMaterial(Vector3f {0.6f, 0.3f, 0.0f}, Vector3f {0.6f, 0.3f, 0.0f});
-  // gl.updateModelMatrix(Matrix4f::identity());
-  // shade interior of polygons
+  gl.enableLighting();
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  // surfaceRec.draw(GL_TRIANGLES);
-  curveRec.draw(GL_TRIANGLES);
-
-  gl.enableLighting(); // reset to default lighting model
+  surfaceRec.draw(GL_TRIANGLES);
 }

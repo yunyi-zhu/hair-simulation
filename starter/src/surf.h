@@ -34,7 +34,7 @@ Surface makeGenCyl( const Curve& profile, const Curve& sweep );
 void outputObjFile( std::ostream& out, const Surface& surface );
 
 // Record the surface vertices. 
-void recordSurface( const Surface& surface, VertexRecorder* recorder);
+void recordSurface( const Surface& surface, VertexRecorder* recorder, Vector3f COLOR);
 
 // This records vertices for normals to the surface at each vertex of length len.
 void recordNormals( const Surface& surface, VertexRecorder* recorder, float len );

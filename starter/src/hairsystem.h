@@ -15,7 +15,7 @@ public:
   std::vector<Vector3f> evalF(std::vector<Vector3f> state) override;
 
   // draw is called once per frame
-  void draw(GLProgram& ctx, VertexRecorder curveRec);
+  void draw(GLProgram& ctx, VertexRecorder curveRec, VertexRecorder surfaceRec);
 
   // inherits
   // std::vector<Vector3f> m_vVecState;
