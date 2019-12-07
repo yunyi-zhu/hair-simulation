@@ -475,8 +475,9 @@ int main(int argc, char** argv)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw nanogui
-        screen->drawContents();
-        screen->drawWidgets();
+      screen->drawContents();
+      screen->drawWidgets();
+      glEnable(GL_DEPTH_TEST);
 
         setViewport(window);
 
@@ -487,6 +488,7 @@ int main(int argc, char** argv)
         uint64_t now = glfwGetTimerValue();
         elapsed_s = (double)(now - start_tick) / freq;
         stepSystem();
+
 
         // Draw the simulation
         drawSystem();
