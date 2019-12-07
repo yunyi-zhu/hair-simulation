@@ -18,6 +18,8 @@
 
 OPTIONAL:
 [ ] Better rendering
+    [ ] fix lighting bug
+    [ ] highlight and shadows
 [ ] GUI sliders / hairstyles
 
 ** NOTES **

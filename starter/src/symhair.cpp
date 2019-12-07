@@ -1,8 +1,8 @@
-#include "symhair.h"
 #include "hairsystem.h"
 #include "camera.h"
-#include "vertexrecorder.h"
 #include "curve.h"
+#include "surf.h"
+#include "symhair.h"
 #include <string>
 #include <iostream>
 
@@ -16,18 +16,18 @@ SymHair::SymHair(Vector3f origin_input,
   weights = weight_inputs;
 }
 
-void SymHair::draw(GLProgram& gl) {
-  const Vector3f HAIR_COLOR(0.9f, 0.9f, 0.9f);
-  gl.updateMaterial(HAIR_COLOR);
+void SymHair::draw(GLProgram& gl, VertexRecorder curveRec) {
+//  const Vector3f HAIR_COLOR(0.9f, 0.9f, 0.9f);
+//  gl.updateMaterial(HAIR_COLOR);
 
   gl.disableLighting();
   gl.updateModelMatrix(Matrix4f::identity());
-  VertexRecorder rec;
+//  VertexRecorder rec;
 
   vector<Vector3f> points;
-  points.push_back(origin);
-  points.push_back(origin);
-  points.push_back(origin);
+//  points.push_back(origin);
+//  points.push_back(origin);
+//  points.push_back(origin);
   points.push_back(origin);
 
   int hair_len = (hairs[0]->getState()).size() / 2;
@@ -40,13 +40,28 @@ void SymHair::draw(GLProgram& gl) {
   }
 
   Curve curve = evalBspline(points, 10);
-  // record curve, can change color
-  const Vector3f WHITE(1, 1, 1);
-  for (int i = 0; i < (int)curve.size() - 1; ++i) {
-    rec.record_poscolor(curve[i].V, WHITE);
-    rec.record_poscolor(curve[i + 1].V, WHITE);
-  }
-  glLineWidth(6.0f);
-  rec.draw(GL_LINES);
+  recordCurve(curve, &curveRec);
+
+  glLineWidth(1.0f);
+  curveRec.draw(GL_LINES);
+
+  Curve profile = evalCircle(0.01, 20);
+  Surface surface = makeGenCyl(profile, curve);
+
+  recordSurface(surface, &curveRec);
+
+  // // recordSurface(surface, &surfaceRec);
+  // // recordNormals(surface, &surfaceNormals, 0.1f);
+
+  // gl.camera->SetUniforms(gl.program_light);
+  gl.updateMaterial(Vector3f {0.6f, 0.3f, 0.0f}, Vector3f {0.6f, 0.3f, 0.0f});
+  // gl.updateModelMatrix(Matrix4f::identity());
+  // shade interior of polygons
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  // surfaceRec.draw(GL_TRIANGLES);
+  curveRec.draw(GL_TRIANGLES);
+
   gl.enableLighting(); // reset to default lighting model
 }

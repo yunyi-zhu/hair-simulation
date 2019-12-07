@@ -4,13 +4,14 @@
 #include <vector>
 #include <vecmath.h>
 #include "hairsystem.h"
+#include "vertexrecorder.h"
 
 using namespace std;
 
 class SymHair {
 public:
   SymHair(Vector3f origin, vector<HairSystem *> hairs, vector<float> weights);
-  void draw(GLProgram& ctx);
+  void draw(GLProgram& ctx, VertexRecorder curveRec);
 
 private:
   Vector3f origin;
