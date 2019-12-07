@@ -9,9 +9,9 @@
 using namespace std;
 
 const float HEAD_R = 1.0f; // head radius
-const int DENSITY_H = 4; // number of hairs each round
+const int DENSITY_H = 5; // number of hairs each round
 const int DENSITY_V = 3; // number of rounds
-const int DENSITY_SYM = 0; // number of symhairs between two hairs
+const int DENSITY_SYM = 5; // number of symhairs between two hairs
 const float LAT_OFFSET = 0.05; // more realistic look of top hair
 
 static Vector3f positionFromLatLon(float lat, float lon) {
@@ -28,7 +28,7 @@ HairGroup::HairGroup() {
   for (int i = 0; i < DENSITY_V; i++) {
     for (int j = 0; j < DENSITY_H; j++) {
       float lat = ( M_PI / 2.0f ) / DENSITY_V * (i + 1) - LAT_OFFSET;
-      float lon = ( M_PI ) / DENSITY_H * j;
+      float lon = - M_PI * 2 / 3 + ( M_PI ) / DENSITY_H * j;
 
       hairs.push_back(HairSystem(positionFromLatLon(lat, lon), HAIR_LENGTH));
       lats.push_back(lat);
