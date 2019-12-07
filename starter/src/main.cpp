@@ -429,27 +429,22 @@ int main(int argc, char** argv)
     // Main Loop
     uint64_t freq = glfwGetTimerFrequency();
     resetTime();
+    int counter = 0;
     while (!glfwWindowShouldClose(window)) {
-        // Clear the rendering window
+      uint64_t now = glfwGetTimerValue();
+      elapsed_s = (double)(now - start_tick) / freq;
+      stepSystem();
+
+      // Clear the rendering window
+      if (counter == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw nanogui
-      screen->drawContents();
-      screen->drawWidgets();
-      glEnable(GL_DEPTH_TEST);
+        screen->drawContents();
+        screen->drawWidgets();
+        glEnable(GL_DEPTH_TEST);
 
         setViewport(window);
-
-        if (gMousePressed) {
-            drawAxis();
-        }
-
-        uint64_t now = glfwGetTimerValue();
-        elapsed_s = (double)(now - start_tick) / freq;
-        stepSystem();
-
-
-        // Draw the simulation
         drawSystem();
 
         // Make back buffer visible
@@ -457,6 +452,13 @@ int main(int argc, char** argv)
 
         // Check if any input happened during the last frame
         glfwPollEvents();
+      }
+
+      if (gMousePressed) {
+          drawAxis();
+      }
+
+      counter = (counter + 1) % 3;
     }
 
     freeGUI();

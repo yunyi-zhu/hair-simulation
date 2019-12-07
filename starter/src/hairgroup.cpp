@@ -106,11 +106,13 @@ HairGroup::HairGroup() {
 
 void HairGroup::draw(GLProgram& gl, VertexRecorder rec) {
   gl.updateModelMatrix(Matrix4f::identity());
-  for (int i = 0; i < hairs.size(); i++) {
+  int hairs_size = hairs.size();
+  int symhairs_size = symhairs.size();
+  for (int i = 0; i < hairs_size; i++) {
     hairs[i].draw(gl, rec);
   }
 
-  for (int i = 0; i < symhairs.size(); i++) {
+  for (int i = 0; i < symhairs_size; i++) {
     symhairs[i].draw(gl, rec);
   }
 
