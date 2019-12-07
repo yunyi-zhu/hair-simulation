@@ -105,7 +105,8 @@ HairGroup::HairGroup() {
 }
 
 void HairGroup::draw(GLProgram& gl, VertexRecorder rec) {
-  gl.updateModelMatrix(Matrix4f::identity());
+  // gl.updateModelMatrix(Matrix4f::identity());
+  // drawSphere(HEAD_R, 30, 30);
   for (int i = 0; i < hairs.size(); i++) {
     hairs[i].draw(gl, rec);
   }
@@ -115,9 +116,11 @@ void HairGroup::draw(GLProgram& gl, VertexRecorder rec) {
   }
 
   gl.enableLighting();
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   const Vector3f HEAD_COLOR(0.8f, 0.8f, 0.8f);
-  gl.updateMaterial(HEAD_COLOR);
+  const Vector3f BLACK(0.0f, 0.0f, 0.0f);
+  const Vector3f WHITE(1.0f, 1.0f, 1.0f);
+  gl.updateMaterial(HEAD_COLOR, HEAD_COLOR);
   gl.updateModelMatrix(Matrix4f::identity());
   drawSphere(HEAD_R, 30, 30);
 }

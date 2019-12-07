@@ -219,10 +219,10 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     hairGroup->draw(gl, rec);
 
     // set uniforms for floor
-    gl.updateMaterial(FLOOR_COLOR);
-    gl.updateModelMatrix(Matrix4f::translation(0, -5.0f, 0));
+    // gl.updateMaterial(FLOOR_COLOR);
+    // gl.updateModelMatrix(Matrix4f::translation(0, -5.0f, 0));
     // draw floor
-//    drawQuad(50.0f);
+    // drawQuad(50.0f);
   }
 
   void initRendering() {

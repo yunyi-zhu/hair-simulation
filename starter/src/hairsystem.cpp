@@ -122,7 +122,7 @@ void HairSystem::draw(GLProgram& gl, VertexRecorder curveRec)
   glLineWidth(1.0f);
   curveRec.draw(GL_LINES);
 
-  Curve profile = evalCircle(0.01, 20);
+  Curve profile = evalCircle(0.01, 10);
   Surface surface = makeGenCyl(profile, curve);
 
   recordSurface(surface, &curveRec);
