@@ -399,15 +399,10 @@ int main(int argc, char** argv)
 
     GLFWwindow* window = createOpenGLWindow(1024, 1024, "Assignment 3");
     initGUI(window);
-<<<<<<< HEAD
-
     // setup the event handlers
     // glfwSetKeyCallback(window, keyCallback);
     // glfwSetMouseButtonCallback(window, mouseCallback);
     // glfwSetCursorPosCallback(window, motionCallback);
-
-=======
->>>>>>> 908d7f0ed7521c08382842cc2749072df3c4d8ec
     initRendering();
 
     // The program object controls the programmable parts

@@ -21,7 +21,7 @@ public:
   std::vector<HairSystem> hairs;
   std::vector<SymHair> symhairs;
 
-  void draw(GLProgram& ctx, VertexRecorder rec);
+  void draw(GLProgram& ctx, VertexRecorder curveRec, VertexRecorder surfaceRec);
   void step(TimeStepper* timeStepper, float h);
   void setHairCurve(float l_input);
 
