@@ -266,7 +266,7 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     ng::Window *window = nullptr;
     ng::Widget *animator = nullptr;
 
-    window = new ng::Window(screen, "Animator 1");
+    window = new ng::Window(screen, "Customize Your Hair");
     window->setPosition(ng::Vector2i(10));
     window->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
     window->setFixedHeight(800);
@@ -274,34 +274,39 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     animator = new ng::Widget(window);
     animator->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
 
-    // sample of a button
-    ng::Button *btn = new ng::Button(animator, "Take Screenshot");
-//      btn->setCallback([glfwwin]() {
-//        screencapture(glfwwin);
-//      });
+    //============================
+    //  GUI Specification Starts
+    //============================
 
-    ng::Widget *jointpanel = new ng::Widget(animator);
-    jointpanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 2, 0));
+    // Hair Curvature Slider
+    ng::Widget *curvaturePanel = new ng::Widget(animator);
+    curvaturePanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 2, 0));
 
-    ng::Label *label = new ng::Label(jointpanel, "Hair Curvature");
+    ng::Label *label = new ng::Label(curvaturePanel, "Hair Curvature");
     label->setFontSize(FONTSZ);
 
-    ng::Widget *panel = new ng::Widget(jointpanel);
-    panel->setLayout(new ng::BoxLayout(ng::Orientation::Horizontal, ng::Alignment::Middle, 3, 10));
-
-    ng::Slider *slider = new ng::Slider(panel);
+    ng::Slider *slider = new ng::Slider(curvaturePanel);
     slider->setFixedWidth(160);
     slider->setFixedHeight(ROWH);
     slider->setValue(0.5);
-    slider->setFinalCallback([&](float value) {
-      //cout << "Final slider value: " << (int)(value * 100) << endl;
-    });
     slider->setCallback([](float value) {
       float l_min_index = 1;
       float l_max_index = 3;
       float l_input = l_max_index - value * (l_max_index - l_min_index);
       hairGroup->setHairCurve(l_input);
     });
+
+    // sample of a button
+    ng::Button *btn = new ng::Button(animator, "Take Screenshot");
+//      btn->setCallback([glfwwin]() {
+//        screencapture(glfwwin);
+//      });
+
+
+
+    //============================
+    //  GUI Specification Ends
+    //============================
 
     // update text box and global vars.
     slider->notifyCallback();
