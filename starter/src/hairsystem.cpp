@@ -5,21 +5,6 @@
 #include <string>
 #include <iostream>
 
-const float GRAVITY = 9.8f;
-const float K_DRAG = 0.015f;
-const float M = 0.01f;
-const float COLLISION_RES = 1000.0f;
-
-const float UNIT_H = 0.5f;
-const float HORI_DELTA = 0.3f;
-const float VERTI_DELTA = 0.2f;
-
-const float CORE_L = UNIT_H;
-const float SUPPORT_L = 0.5 * UNIT_H;
-
-const float CORE_K = 60.0f;
-const float SUPPORT_K = 30.0f;
-
 using namespace std;
 
 static Vector3f headCollisionForce(Vector3f point) {
@@ -58,7 +43,7 @@ HairSystem::HairSystem(Vector3f origin, int length)
   }
 
   for (int i = 0; i < H - 3; i++) {
-    springs.push_back(Vector4f(i, i+3, 3 * UNIT_H, SUPPORT_K));
+    springs.push_back(Vector4f(i, i+3, SUPPORT_L_3, SUPPORT_K));
   }
   fixedPtIndex.push_back(0);
 }

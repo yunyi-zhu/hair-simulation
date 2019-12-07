@@ -266,83 +266,45 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     ng::Window *window = nullptr;
     ng::Widget *animator = nullptr;
 
-      window = new ng::Window(screen, "Animator 1");
-      window->setPosition(ng::Vector2i(10));
-      window->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
-      window->setFixedHeight(800);
+    window = new ng::Window(screen, "Animator 1");
+    window->setPosition(ng::Vector2i(10));
+    window->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
+    window->setFixedHeight(800);
 
-      // Scrollpanel is broken. Slider drag mouse events not transformed properly
-      // ng::VScrollPanel* vspanel = new ng::VScrollPanel(window);
-      // vspanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
-      // vspanel->setFixedHeight(600);
+    animator = new ng::Widget(window);
+    animator->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
 
-      animator = new ng::Widget(window);
-      animator->setLayout(new ng::BoxLayout(ng::Orientation::Vertical));
-
-      // sample of a button
-      ng::Button *btn = new ng::Button(animator, "Take Screenshot");
+    // sample of a button
+    ng::Button *btn = new ng::Button(animator, "Take Screenshot");
 //      btn->setCallback([glfwwin]() {
 //        screencapture(glfwwin);
 //      });
 
-      ng::Widget *jointpanel = new ng::Widget(animator);
-      jointpanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 2, 0));
+    ng::Widget *jointpanel = new ng::Widget(animator);
+    jointpanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 2, 0));
 
-      ng::Label *label = new ng::Label(jointpanel, "MEOW");
-      label->setFontSize(FONTSZ);
+    ng::Label *label = new ng::Label(jointpanel, "Hair Curvature");
+    label->setFontSize(FONTSZ);
 
-      for (int dim = 0; dim < 3; ++dim) {
+    ng::Widget *panel = new ng::Widget(jointpanel);
+    panel->setLayout(new ng::BoxLayout(ng::Orientation::Horizontal, ng::Alignment::Middle, 3, 10));
 
-        ng::Widget *panel = new ng::Widget(jointpanel);
-        panel->setLayout(new ng::BoxLayout(ng::Orientation::Horizontal, ng::Alignment::Middle, 3, 10));
+    ng::Slider *slider = new ng::Slider(panel);
+    slider->setFixedWidth(160);
+    slider->setFixedHeight(ROWH);
+    slider->setValue(0.5);
+    slider->setFinalCallback([&](float value) {
+      //cout << "Final slider value: " << (int)(value * 100) << endl;
+    });
+    slider->setCallback([](float value) {
+      float l_min_index = 1;
+      float l_max_index = 3;
+      float l_input = l_max_index - value * (l_max_index - l_min_index);
+      hairGroup->setHairCurve(l_input);
+    });
 
-        char buff[80];
-        switch (dim) {
-          case 0:
-            sprintf(buff, "%s", "x");
-            break;
-          case 1:
-            sprintf(buff, "%s", "y");
-            break;
-          case 2:
-            sprintf(buff, "%s", "z");
-            break;
-        }
-
-        ng::Label *label = new ng::Label(panel, buff);
-        label->setFontSize(FONTSZ);
-        label->setFixedSize(ng::Vector2i(10, ROWH));
-
-        ng::Slider *slider = new ng::Slider(panel);
-        slider->setFixedWidth(160);
-        slider->setFixedHeight(ROWH);
-        slider->setValue(0.5);
-        slider->setFinalCallback([&](float value) {
-          //cout << "Final slider value: " << (int)(value * 100) << endl;
-        });
-
-        ng::TextBox *textBox = new ng::TextBox(panel);
-        textBox->setFixedSize(ng::Vector2i(40, ROWH));
-//        slider->setCallback([textBox, i, dim](float value) {
-//          char buff[80];
-//          g_jointangles[i][dim] = (value - 0.5f) * 2 * (float) M_PI;
-//          sprintf(buff, "%.2f", g_jointangles[i][dim]);
-//          textBox->setValue(buff);
-//
-//          if (skeleton) {
-//            // update animation
-//            skeleton->setJointTransform(i, g_jointangles[i].x(), g_jointangles[i].y(), g_jointangles[i].z());
-//            updateMesh();
-//          }
-//        });
-
-        //textBox->setFixedSize(ng::Vector2i(40, ROWH));
-        textBox->setFontSize(FONTSZ);
-        textBox->setAlignment(ng::TextBox::Alignment::Right);
-
-        // update text box and global vars.
-        slider->notifyCallback();
-      }
+    // update text box and global vars.
+    slider->notifyCallback();
 
     screen->performLayout();
 
@@ -412,8 +374,6 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
   }
 }
 
-
-
 // Main routine.
 // Set up OpenGL, define the callbacks and start the main loop
 int main(int argc, char** argv)
@@ -435,15 +395,11 @@ int main(int argc, char** argv)
     h = (float)atof(argv[2]);
     printf("Using Integrator %c with time step %.4f\n", integrator, h);
 
+    // Setup particle system
+    initSystem();
 
     GLFWwindow* window = createOpenGLWindow(1024, 1024, "Assignment 3");
     initGUI(window);
-
-    // setup the event handlers
-    glfwSetKeyCallback(window, keyCallback);
-    glfwSetMouseButtonCallback(window, mouseCallback);
-    glfwSetCursorPosCallback(window, motionCallback);
-
     initRendering();
 
     // The program object controls the programmable parts
@@ -464,8 +420,6 @@ int main(int argc, char** argv)
     camera.SetPerspective(50);
     camera.SetDistance(10);
 
-    // Setup particle system
-    initSystem();
 
     // Main Loop
     uint64_t freq = glfwGetTimerFrequency();

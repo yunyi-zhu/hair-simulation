@@ -5,6 +5,22 @@
 #include "particlesystem.h"
 #include "vertexrecorder.h"
 
+const float GRAVITY = 9.8f;
+const float K_DRAG = 0.015f;
+const float M = 0.01f;
+const float COLLISION_RES = 1000.0f;
+
+const float UNIT_H = 0.5f;
+const float HORI_DELTA = 0.3f;
+const float VERTI_DELTA = 0.2f;
+
+const float CORE_L = UNIT_H;
+const float SUPPORT_L = 0.5 * UNIT_H;
+
+const float CORE_K = 60.0f;
+const float SUPPORT_K = 30.0f;
+const float SUPPORT_L_3 = 3 * UNIT_H;
+
 class HairSystem : public ParticleSystem
 {
 public:
@@ -17,12 +33,17 @@ public:
   // draw is called once per frame
   void draw(GLProgram& ctx, VertexRecorder curveRec);
 
+  void setHairCurve(float l_input) {
+    for (int i = 2*H - 3; i < 3*H - 6; i++) {
+      springs[i][2] = l_input * UNIT_H;
+    }
+  }
+
   // inherits
-  // std::vector<Vector3f> m_vVecState;
+//   std::vector<Vector3f> m_vVecState;
 private:
   // hair length: number of layers
   int H;
-
   // private variables
   // Spring:
   //  1. Index of first node

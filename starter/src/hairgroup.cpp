@@ -30,7 +30,7 @@ HairGroup::HairGroup() {
       float lat = ( M_PI / 2.0f ) / DENSITY_V * (i + 1) - LAT_OFFSET;
       float lon = ( M_PI ) / DENSITY_H * j;
 
-      hairs.push_back(HairSystem(positionFromLatLon(lat, lon), 16));
+      hairs.push_back(HairSystem(positionFromLatLon(lat, lon), HAIR_LENGTH));
       lats.push_back(lat);
       lons.push_back(lon);
     }
@@ -130,4 +130,11 @@ void HairGroup::step(TimeStepper* timeStepper, float h) {
 
 int HairGroup::indexOf(int h, int w) {
   return h * DENSITY_H + w;
+}
+
+void HairGroup::setHairCurve(float l_input) {
+  int H = hairs.size();
+  for (int i = 0; i < H; i++) {
+    hairs[i].setHairCurve(l_input);
+  }
 }
