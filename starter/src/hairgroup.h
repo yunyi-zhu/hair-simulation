@@ -10,7 +10,7 @@ public:
 
   std::vector<HairSystem> hairs;
 
-   void draw(GLProgram& ctx);
+   void draw(GLProgram& ctx, VertexRecorder rec);
    void step(TimeStepper* timeStepper, float h);
 };
 

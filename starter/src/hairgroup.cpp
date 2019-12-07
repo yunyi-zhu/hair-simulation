@@ -9,7 +9,7 @@ using namespace std;
 
 
 const float HEAD_R = 1.0f; // head radius
-const int DENSITY_H = 2; // number of hairs each round
+const int DENSITY_H = 6; // number of hairs each round
 const int DENSITY_V = 6; // number of rounds
 
 HairGroup::HairGroup() {
@@ -29,15 +29,11 @@ HairGroup::HairGroup() {
   }
 }
 
-void HairGroup::draw(GLProgram& gl) {
+void HairGroup::draw(GLProgram& gl, VertexRecorder rec) {
   gl.updateModelMatrix(Matrix4f::identity());
   for (int i = 0; i < hairs.size(); i++) {
-    hairs[i].draw(gl);
+    hairs[i].draw(gl, rec);
   }
-
-  // const Vector3f LIGHT_POS(3.0f, 3.0f, 5.0f);
-  // const Vector3f LIGHT_COLOR(120.0f, 120.0f, 120.0f);
-  // gl.updateLight(LIGHT_POS, LIGHT_COLOR.xyz());
   gl.enableLighting();
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   const Vector3f HEAD_COLOR(0.8f, 0.8f, 0.8f);

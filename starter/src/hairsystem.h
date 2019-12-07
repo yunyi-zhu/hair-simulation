@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "particlesystem.h"
+#include "vertexrecorder.h"
 
 class HairSystem : public ParticleSystem
 {
@@ -14,7 +15,7 @@ public:
   std::vector<Vector3f> evalF(std::vector<Vector3f> state) override;
 
   // draw is called once per frame
-  void draw(GLProgram& ctx);
+  void draw(GLProgram& ctx, VertexRecorder curveRec);
 
   // inherits
   // std::vector<Vector3f> m_vVecState;

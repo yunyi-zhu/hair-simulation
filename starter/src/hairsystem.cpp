@@ -97,12 +97,13 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
   return f;
 }
 
-void HairSystem::draw(GLProgram& gl)
+void HairSystem::draw(GLProgram& gl, VertexRecorder curveRec)
 {
   gl.disableLighting();
   gl.updateModelMatrix(Matrix4f::identity());
 
-  VertexRecorder curveRec;
+  // VertexRecorder curveRec;
+  
   // VertexRecorder curveFrames;
   // VertexRecorder surfaceRec;
   // VertexRecorder surfaceNormals;
@@ -110,8 +111,6 @@ void HairSystem::draw(GLProgram& gl)
   vector<Vector3f> state = getState();
   vector<Vector3f> points;
   points.push_back(state[0]);
-  // points.push_back(state[0]);
-  // points.push_back(state[0]);
   for (int i = 0; i < H; i++) {
     points.push_back(state[2 * i]);
   }
@@ -132,11 +131,9 @@ void HairSystem::draw(GLProgram& gl)
   // // recordSurface(surface, &surfaceRec);
   // // recordNormals(surface, &surfaceNormals, 0.1f);
 
-  // // Surface surface = makeSurfRev(curve, 10);
-  gl.enableLighting();
-  gl.camera->SetUniforms(gl.program_light);
-  gl.updateMaterial(Vector3f { 0.6f, 0.3f, 0.0f }, Vector3f {0.6f, 0.3f, 0.0f});
-  gl.updateModelMatrix(Matrix4f::identity());
+  // gl.camera->SetUniforms(gl.program_light);
+  gl.updateMaterial(Vector3f {0.6f, 0.3f, 0.0f}, Vector3f {0.6f, 0.3f, 0.0f});
+  // gl.updateModelMatrix(Matrix4f::identity());
   // shade interior of polygons
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glEnable(GL_CULL_FACE);
