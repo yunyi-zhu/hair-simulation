@@ -56,7 +56,11 @@ list (APPEND A3_SRC
   src/hairsystem.cpp
   src/hairgroup.cpp
   src/curve.cpp
+<<<<<<< HEAD
   src/surf.cpp
+=======
+  src/symhair.cpp
+>>>>>>> 7644a4e72453feb5f5697ef268d79707cdb98ee4
 )
 list (APPEND A3_HEADER
   src/gl.h
@@ -68,8 +72,12 @@ list (APPEND A3_HEADER
   src/hairsystem.h
   src/hairgroup.h
   src/curve.h
+<<<<<<< HEAD
   src/surf.h
   src/tuple.h
+=======
+  src/symhair.h
+>>>>>>> 7644a4e72453feb5f5697ef268d79707cdb98ee4
 )
 
 add_executable(a3 ${A3_SRC} ${A3_HEADER})

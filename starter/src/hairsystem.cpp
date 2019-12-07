@@ -1,6 +1,5 @@
 #include "hairsystem.h"
 #include "camera.h"
-#include "vertexrecorder.h"
 #include "curve.h"
 #include "surf.h"
 #include <string>
@@ -103,7 +102,7 @@ void HairSystem::draw(GLProgram& gl, VertexRecorder curveRec)
   gl.updateModelMatrix(Matrix4f::identity());
 
   // VertexRecorder curveRec;
-  
+
   // VertexRecorder curveFrames;
   // VertexRecorder surfaceRec;
   // VertexRecorder surfaceNormals;
