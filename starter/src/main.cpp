@@ -297,10 +297,10 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     });
 
     // sample of a button
-    ng::Button *btn = new ng::Button(animator, "Take Screenshot");
-//      btn->setCallback([glfwwin]() {
-//        screencapture(glfwwin);
-//      });
+    ng::Button *btn = new ng::Button(animator, "Wind");
+    btn->setCallback([]() {
+      hairGroup->startWind();
+    });
 
 
 
@@ -403,7 +403,7 @@ int main(int argc, char** argv)
     // Setup particle system
     initSystem();
 
-    GLFWwindow* window = createOpenGLWindow(1024, 1024, "Assignment 3");
+    GLFWwindow* window = createOpenGLWindow(1024, 1024, "Hair Simulation");
     initGUI(window);
     initRendering();
 
@@ -425,17 +425,17 @@ int main(int argc, char** argv)
     camera.SetPerspective(50);
     camera.SetDistance(10);
 
-
     // Main Loop
     uint64_t freq = glfwGetTimerFrequency();
     resetTime();
     int counter = 0;
     while (!glfwWindowShouldClose(window)) {
+      // update every step
       uint64_t now = glfwGetTimerValue();
       elapsed_s = (double)(now - start_tick) / freq;
       stepSystem();
 
-      // Clear the rendering window
+      // Draw every n steps for performance purpose
       if (counter == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

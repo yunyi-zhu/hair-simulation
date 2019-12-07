@@ -39,6 +39,10 @@ public:
     }
   }
 
+  void startWind() {
+    windBlowing = true;
+  }
+
   // inherits
 //   std::vector<Vector3f> m_vVecState;
 private:
@@ -53,6 +57,10 @@ private:
   std::vector<Vector4f> springs;
   // the indices of the points where they are fixed
   std::vector<int> fixedPtIndex;
+  // whether the wind should be blowing
+  bool windBlowing;
+  Vector3f windDirection;
+  float windStrength;
 };
 
 

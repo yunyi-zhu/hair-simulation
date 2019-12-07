@@ -16,6 +16,7 @@ public:
   void draw(GLProgram& ctx, VertexRecorder rec);
   void step(TimeStepper* timeStepper, float h);
   void setHairCurve(float l_input);
+  void startWind();
 private:
   int indexOf(int h, int w);
 };

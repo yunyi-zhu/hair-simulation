@@ -46,6 +46,11 @@ HairSystem::HairSystem(Vector3f origin, int length)
     springs.push_back(Vector4f(i, i+3, SUPPORT_L_3, SUPPORT_K));
   }
   fixedPtIndex.push_back(0);
+
+  // wind
+  windBlowing = false;
+  Vector3f windDirection = Vector3f(0,0,1);
+  windStrength = 1.0f;
 }
 
 std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
@@ -58,7 +63,13 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
     Vector3f gravity(0.0, -GRAVITY, 0.0);
     Vector3f drag = -K_DRAG * state[2 * i + 1] / M;
     Vector3f collision = headCollisionForce(state[2 * i]);
-    f.push_back(gravity + drag + collision);
+    Vector3f windForce = Vector3f::ZERO;
+
+    if (windBlowing) {
+      windForce = windDirection * windStrength;
+    }
+
+    f.push_back(gravity + drag + collision + windForce);
   }
 
   // springs
