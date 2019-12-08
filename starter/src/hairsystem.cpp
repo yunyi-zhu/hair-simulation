@@ -9,7 +9,7 @@ using namespace std;
 
 static Vector3f headCollisionForce(Vector3f point) {
   float length = point.abs();
-  if ( length < 1.1) {
+  if ( length < 1.07) {
     float forceAbs = COLLISION_RES;
     return forceAbs * point.normalized();
   } else {
