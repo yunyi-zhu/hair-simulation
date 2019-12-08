@@ -17,12 +17,11 @@
 [ ] CHECKPOINT 3: REAL!
 
 OPTIONAL:
-[ ] Better rendering
-    [ ] fix lighting bug
-    [ ] highlight and shadows
-[ ] GUI sliders / hairstyles
+[x] Better rendering
+    [x] fix lighting bug
+    [x] highlight and shadows
+[x] GUI sliders / hairstyles
     [x] curvature
-    [ ] curvature remove i+3
-    [ ] color button
-    [ ] wind button
+    [x] color button
+    [x] wind button
 
