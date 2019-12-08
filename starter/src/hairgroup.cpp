@@ -107,15 +107,10 @@ HairGroup::HairGroup() {
 }
 
 void HairGroup::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder surfaceRec) {
-  const Vector3f HAIR_COLOR(1.0f, 1.0f, 1.0f);
-  // cout << CORE_HAIR_COLOR[0] << endl;
-  gl.updateMaterial(CORE_HAIR_COLOR);
-
   for (int i = 0; i < hairs.size(); i++) {
     hairs[i].draw(gl, curveRec, surfaceRec);
   }
 
-  gl.updateMaterial(CORE_HAIR_COLOR);
   for (int i = 0; i < symhairs.size(); i++) {
     symhairs[i].draw(gl, curveRec, surfaceRec);
   }
@@ -166,12 +161,14 @@ void HairGroup::setWindDirection(float index) {
   }
 }
 
-void HairGroup::setHairColor(float r, float g, float b) {
+void HairGroup::setCoreHairColor(float r, float g, float b) {
   int H = hairs.size();
   for (int i = 0; i < H; i++) {
     hairs[i].setHairColor(r, g, b);
   }
+}
 
+void HairGroup::setHairColor(float r, float g, float b) {
   int H2 = symhairs.size();
   for (int i = 0; i < H2; i++) {
     symhairs[i].setHairColor(r, g, b);

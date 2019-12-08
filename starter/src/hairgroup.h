@@ -6,14 +6,6 @@
 #include "timestepper.h"
 static int HAIR_LENGTH = 16;
 
-static Vector3f CORE_HAIR_COLOR(0.75, 0.52, 0.76);
-
-static void setCoreHairColorPurple() {
-	CORE_HAIR_COLOR = Vector3f(0.75, 0.52, 0.76);
-	printf("USE");
-	CORE_HAIR_COLOR.print();
-}
-
 class HairGroup {
 public:
   HairGroup();
@@ -27,6 +19,7 @@ public:
   void toggleWind();
   void setWindStrength(float strength);
   void setWindDirection(float index);
+  void setCoreHairColor(float r, float g, float b);
   void setHairColor(float r, float g, float b);
 
   bool windBlowing;

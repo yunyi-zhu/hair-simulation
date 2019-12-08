@@ -342,14 +342,20 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     ng::Widget *colorPanel = new ng::Widget(animator);
     colorPanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 15, 0));
 
-    ng::Label *colorLabel = new ng::Label(colorPanel, "Color");
+    ng::Label *colorLabel = new ng::Label(colorPanel, "Core Hair Color");
     colorLabel->setFontSize(FONTSZ);
-
     ng::ColorWheel *hairColorSelector = new ng::ColorWheel(colorPanel);
-//    hairColorSelector->setColor(new ng::Color(0.642589f,0.347272f, 0.211211f, 1.0f));
     hairColorSelector->setCallback([](ng::Color color) {
+      hairGroup->setCoreHairColor(color.x(), color.y(), color.z());
+    });
+
+    ng::Label *colorLabel1 = new ng::Label(colorPanel, "Hair Color");
+    colorLabel1->setFontSize(FONTSZ);
+    ng::ColorWheel *hairColorSelector1 = new ng::ColorWheel(colorPanel);
+    hairColorSelector1->setCallback([](ng::Color color) {
       hairGroup->setHairColor(color.x(), color.y(), color.z());
     });
+
 
     //============================
     //  GUI Specification Ends
