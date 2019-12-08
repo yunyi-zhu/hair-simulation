@@ -48,9 +48,9 @@ HairSystem::HairSystem(Vector3f origin, int length)
   fixedPtIndex.push_back(0);
 
   // wind
-  windBlowing = false;
-  Vector3f windDirection = Vector3f(0,0,1);
-  windStrength = 1.0f;
+  windBlowing = true;
+  windDirection = Vector3f(0,0,1);
+  windStrength = 7.0f;
 }
 
 std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
@@ -65,8 +65,13 @@ std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
     Vector3f collision = headCollisionForce(state[2 * i]);
     Vector3f windForce = Vector3f::ZERO;
 
-    if (windBlowing) {
+    if (windStrength > 0 && i > H / 2) {
+      // only blow the lower half of your hair
+      // to create a realistic effect
       windForce = windDirection * windStrength;
+      if (i > H * 3 / 4) {
+        windForce *= 2;
+      }
     }
 
     f.push_back(gravity + drag + collision + windForce);
@@ -122,4 +127,28 @@ void HairSystem::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder sur
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   // makes wrong light: glEnable(GL_CULL_FACE); glCullFace(GL_BACK);
   surfaceRec.draw(GL_TRIANGLES);
+}
+
+void HairSystem::setHairCurve(float l_input) {
+  for (int i = 2*H - 3; i < 3*H - 6; i++) {
+    springs[i][2] = l_input * UNIT_H;
+  }
+}
+
+void HairSystem::toggleWind() {
+  windBlowing = !windBlowing;
+}
+
+void HairSystem::setWindStrength(float strength) {
+  windStrength = strength;
+}
+
+void HairSystem::setWindDirection(float index) {
+  float theta_min = 0;
+  float theta_max = M_PI;
+  float offset = M_PI / 3;
+  float theta = index * (theta_max - theta_min) + theta_min + offset;
+
+  windDirection[0] = cos(theta);
+  windDirection[2] = sin(theta);
 }

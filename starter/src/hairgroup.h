@@ -24,7 +24,11 @@ public:
   void draw(GLProgram& ctx, VertexRecorder curveRec, VertexRecorder surfaceRec);
   void step(TimeStepper* timeStepper, float h);
   void setHairCurve(float l_input);
-  void startWind();
+  void toggleWind();
+  void setWindStrength(float strength);
+  void setWindDirection(float index);
+
+  bool windBlowing;
 
 private:
   int indexOf(int h, int w);

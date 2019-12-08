@@ -33,15 +33,10 @@ public:
   // draw is called once per frame
   void draw(GLProgram& ctx, VertexRecorder curveRec, VertexRecorder surfaceRec);
 
-  void setHairCurve(float l_input) {
-    for (int i = 2*H - 3; i < 3*H - 6; i++) {
-      springs[i][2] = l_input * UNIT_H;
-    }
-  }
-
-  void startWind() {
-    windBlowing = true;
-  }
+  void setHairCurve(float l_input);
+  void toggleWind();
+  void setWindStrength(float strength);
+  void setWindDirection(float index);
 
   // inherits
 //   std::vector<Vector3f> m_vVecState;

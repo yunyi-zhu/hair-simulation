@@ -102,6 +102,8 @@ HairGroup::HairGroup() {
       }
     }
   }
+
+  windBlowing = false;
 }
 
 void HairGroup::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder surfaceRec) {
@@ -142,9 +144,24 @@ void HairGroup::setHairCurve(float l_input) {
   }
 }
 
-void HairGroup::startWind(){
+void HairGroup::toggleWind(){
   int H = hairs.size();
   for (int i = 0; i < H; i++) {
-    hairs[i].startWind();
+    hairs[i].toggleWind();
+  }
+  windBlowing = !windBlowing;
+}
+
+void HairGroup::setWindStrength(float strength) {
+  int H = hairs.size();
+  for (int i = 0; i < H; i++) {
+    hairs[i].setWindStrength(strength);
+  }
+}
+
+void HairGroup::setWindDirection(float index) {
+  int H = hairs.size();
+  for (int i = 0; i < H; i++) {
+    hairs[i].setWindDirection(index);
   }
 }

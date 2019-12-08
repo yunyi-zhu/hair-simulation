@@ -275,35 +275,71 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
 
     // Hair Curvature Slider
     ng::Widget *curvaturePanel = new ng::Widget(animator);
-    curvaturePanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 2, 0));
+    curvaturePanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 15, 0));
 
-    ng::Label *label = new ng::Label(curvaturePanel, "Hair Curvature");
-    label->setFontSize(FONTSZ);
+    ng::Label *curvatureLabel = new ng::Label(curvaturePanel, "Hair Curvature");
+    curvatureLabel->setFontSize(FONTSZ);
 
-    ng::Slider *slider = new ng::Slider(curvaturePanel);
-    slider->setFixedWidth(160);
-    slider->setFixedHeight(ROWH);
-    slider->setValue(0.5);
-    slider->setCallback([](float value) {
+    ng::Slider *curvatureSlider = new ng::Slider(curvaturePanel);
+    curvatureSlider->setFixedWidth(160);
+    curvatureSlider->setFixedHeight(ROWH);
+    curvatureSlider->setValue(0.5);
+    curvatureSlider->setCallback([](float value) {
       float l_min_index = 1;
-      float l_max_index = 3;
+      float l_max_index = 4;
       float l_input = l_max_index - value * (l_max_index - l_min_index);
       hairGroup->setHairCurve(l_input);
     });
+    curvatureSlider->notifyCallback();
 
-    // sample of a button
-    ng::Button *btn = new ng::Button(animator, "Wind");
-    btn->setCallback([]() {
-      hairGroup->startWind();
+    // Wind Editor
+    // button documentation: https://sourcegraph.com/github.com/shibukawa/nanogui-go/-/blob/button.go#L35
+    ng::Widget *windPanel = new ng::Widget(animator);
+    windPanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 15, 0));
+
+    ng::Label *windLabel = new ng::Label(windPanel, "Wind");
+    windLabel->setFontSize(FONTSZ);
+
+    // turn on and off
+//    ng::Button *startWindButton = new ng::Button(windPanel, "Start Wind");
+//    startWindButton->setCallback([startWindButton]() {
+//      hairGroup->toggleWind();
+//      startWindButton->setCaption( hairGroup->windBlowing ? "Stop Wind" : "Start Wind" );
+//    });
+
+    // set wind force
+    ng::Label *windStrengthLabel = new ng::Label(windPanel, "Strength");
+    windStrengthLabel->setFontSize(FONTSZ);
+
+    ng::Slider *windeStrengthSlider = new ng::Slider(windPanel);
+    windeStrengthSlider->setFixedWidth(160);
+    windeStrengthSlider->setFixedHeight(ROWH);
+    windeStrengthSlider->setValue(0);
+    windeStrengthSlider->setCallback([](float value) {
+      float l_min_index = 0;
+      float l_max_index = 50;
+      float l_input = l_min_index + value * (l_max_index - l_min_index);
+      hairGroup->setWindStrength(l_input);
     });
+    windeStrengthSlider->notifyCallback();
 
+    // set wind direction
+    ng::Label *windDirectionLabel = new ng::Label(windPanel, "Direction");
+    windDirectionLabel->setFontSize(FONTSZ);
+
+    ng::Slider *windeDirectionSlider = new ng::Slider(windPanel);
+    windeDirectionSlider->setFixedWidth(160);
+    windeDirectionSlider->setFixedHeight(ROWH);
+    windeDirectionSlider->setValue(0);
+    windeDirectionSlider->setCallback([](float value) {
+      hairGroup->setWindDirection(value);
+    });
+    windeDirectionSlider->notifyCallback();
 
     //============================
     //  GUI Specification Ends
     //============================
 
-    // update text box and global vars.
-    slider->notifyCallback();
 
     screen->performLayout();
 
