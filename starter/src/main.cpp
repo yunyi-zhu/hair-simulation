@@ -273,7 +273,7 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     //  GUI Specification Starts
     //============================
 
-    // Hair Curvature Slider
+    // 1. Hair Curvature Slider
     ng::Widget *curvaturePanel = new ng::Widget(animator);
     curvaturePanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 15, 0));
 
@@ -292,7 +292,8 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     });
     curvatureSlider->notifyCallback();
 
-    // Wind Editor
+
+    // 2. Wind Editor
     // button documentation: https://sourcegraph.com/github.com/shibukawa/nanogui-go/-/blob/button.go#L35
     ng::Widget *windPanel = new ng::Widget(animator);
     windPanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 15, 0));
@@ -327,14 +328,28 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     ng::Label *windDirectionLabel = new ng::Label(windPanel, "Direction");
     windDirectionLabel->setFontSize(FONTSZ);
 
-    ng::Slider *windeDirectionSlider = new ng::Slider(windPanel);
-    windeDirectionSlider->setFixedWidth(160);
-    windeDirectionSlider->setFixedHeight(ROWH);
-    windeDirectionSlider->setValue(0);
-    windeDirectionSlider->setCallback([](float value) {
+    ng::Slider *windDirectionSlider = new ng::Slider(windPanel);
+    windDirectionSlider->setFixedWidth(160);
+    windDirectionSlider->setFixedHeight(ROWH);
+    windDirectionSlider->setValue(0);
+    windDirectionSlider->setCallback([](float value) {
       hairGroup->setWindDirection(value);
     });
-    windeDirectionSlider->notifyCallback();
+    windDirectionSlider->notifyCallback();
+
+
+    // 3. Color Picker
+    ng::Widget *colorPanel = new ng::Widget(animator);
+    colorPanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 15, 0));
+
+    ng::Label *colorLabel = new ng::Label(colorPanel, "Color");
+    colorLabel->setFontSize(FONTSZ);
+
+    ng::ColorWheel *hairColorSelector = new ng::ColorWheel(colorPanel);
+//    hairColorSelector->setColor(new ng::Color(0.642589f,0.347272f, 0.211211f, 1.0f));
+    hairColorSelector->setCallback([](ng::Color color) {
+      hairGroup->setHairColor(color.x(), color.y(), color.z());
+    });
 
     //============================
     //  GUI Specification Ends

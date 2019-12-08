@@ -12,11 +12,13 @@ class SymHair {
 public:
   SymHair(Vector3f origin, vector<HairSystem *> hairs, vector<float> weights);
   void draw(GLProgram& ctx, VertexRecorder curveRec, VertexRecorder surfaceRec);
+  void setHairColor(float r, float g, float b);
 
 private:
   Vector3f origin;
   vector<HairSystem*> hairs;
   vector<float> weights;
+  Vector3f hairColor;
 };
 
 

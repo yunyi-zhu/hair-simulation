@@ -27,6 +27,7 @@ public:
   void toggleWind();
   void setWindStrength(float strength);
   void setWindDirection(float index);
+  void setHairColor(float r, float g, float b);
 
   bool windBlowing;
 

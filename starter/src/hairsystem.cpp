@@ -51,6 +51,8 @@ HairSystem::HairSystem(Vector3f origin, int length)
   windBlowing = true;
   windDirection = Vector3f(0,0,1);
   windStrength = 7.0f;
+
+  hairColor = Vector3f(0.642589, 0.347272, 0.211211);
 }
 
 std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
@@ -118,11 +120,10 @@ void HairSystem::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder sur
 
   Curve profile = evalCircle(0.01, 6);
   Surface surface = makeGenCyl(profile, curve);
-  recordSurface(surface, &surfaceRec, Vector3f(0.6f, 0.3f, 0.0f));
+  recordSurface(surface, &surfaceRec, hairColor);
 
   gl.enableLighting();
-  // const Vector3f HAIR_COLOR(0.6f, 0.3f, 0.0f);
-  // gl.updateMaterial(HAIR_COLOR);
+  gl.updateMaterial(hairColor);
   // shade interior of polygons
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   // makes wrong light: glEnable(GL_CULL_FACE); glCullFace(GL_BACK);
@@ -151,4 +152,10 @@ void HairSystem::setWindDirection(float index) {
 
   windDirection[0] = cos(theta);
   windDirection[2] = sin(theta);
+}
+
+void HairSystem::setHairColor(float r, float g, float b) {
+  hairColor[0] = r;
+  hairColor[1] = g;
+  hairColor[2] = b;
 }

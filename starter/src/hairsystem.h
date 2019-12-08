@@ -37,6 +37,7 @@ public:
   void toggleWind();
   void setWindStrength(float strength);
   void setWindDirection(float index);
+  void setHairColor(float r, float g, float b);
 
   // inherits
 //   std::vector<Vector3f> m_vVecState;
@@ -56,6 +57,8 @@ private:
   bool windBlowing;
   Vector3f windDirection;
   float windStrength;
+
+  Vector3f hairColor;
 };
 
 

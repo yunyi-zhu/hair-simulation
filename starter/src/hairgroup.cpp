@@ -165,3 +165,15 @@ void HairGroup::setWindDirection(float index) {
     hairs[i].setWindDirection(index);
   }
 }
+
+void HairGroup::setHairColor(float r, float g, float b) {
+  int H = hairs.size();
+  for (int i = 0; i < H; i++) {
+    hairs[i].setHairColor(r, g, b);
+  }
+
+  int H2 = symhairs.size();
+  for (int i = 0; i < H2; i++) {
+    symhairs[i].setHairColor(r, g, b);
+  }
+}

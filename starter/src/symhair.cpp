@@ -14,6 +14,7 @@ SymHair::SymHair(Vector3f origin_input,
   origin = origin_input;
   hairs = hair_inputs;
   weights = weight_inputs;
+  hairColor = Vector3f(0.642589, 0.347272, 0.211211);
 }
 
 void SymHair::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder surfaceRec) {
@@ -38,9 +39,17 @@ void SymHair::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder surfac
 
   Curve profile = evalCircle(0.01, 6);
   Surface surface = makeGenCyl(profile, curve);
-  recordSurface(surface, &surfaceRec, Vector3f(0.75f, 0.6f, 0.75f));
+  recordSurface(surface, &surfaceRec, hairColor);
 
   gl.enableLighting();
+  gl.updateMaterial(hairColor);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   surfaceRec.draw(GL_TRIANGLES);
+}
+
+void SymHair::setHairColor(float r, float g, float b) {
+//  printf("rgb is %f %f %f\n", r, g, b);
+  hairColor[0] = r;
+  hairColor[1] = g;
+  hairColor[2] = b;
 }
