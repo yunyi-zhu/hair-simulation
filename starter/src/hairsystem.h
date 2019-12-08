@@ -35,6 +35,7 @@ public:
 
   void setHairCurve(float l_input);
   void toggleWind();
+  void toggleHighlight();
   void setWindStrength(float strength);
   void setWindDirection(float index);
   void setHairColor(float r, float g, float b);
@@ -55,10 +56,12 @@ private:
   std::vector<int> fixedPtIndex;
   // whether the wind should be blowing
   bool windBlowing;
+  bool highlightCore;
   Vector3f windDirection;
   float windStrength;
 
   Vector3f hairColor;
+  Vector3f tempColor;
 };
 
 

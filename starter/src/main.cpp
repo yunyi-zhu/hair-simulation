@@ -342,18 +342,27 @@ const Vector3f FLOOR_COLOR(1.0f, 0.0f, 0.0f);
     ng::Widget *colorPanel = new ng::Widget(animator);
     colorPanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 15, 0));
 
-    ng::Label *colorLabel = new ng::Label(colorPanel, "Core Hair Color");
+    // ng::Label *colorLabel = new ng::Label(colorPanel, "Core Hair Color");
+    // colorLabel->setFontSize(FONTSZ);
+    // ng::ColorWheel *hairColorSelector = new ng::ColorWheel(colorPanel);
+    // hairColorSelector->setCallback([](ng::Color color) {
+    //   hairGroup->setCoreHairColor(color.x(), color.y(), color.z());
+    // });
+
+    ng::Label *colorLabel = new ng::Label(colorPanel, "Hair Color");
     colorLabel->setFontSize(FONTSZ);
     ng::ColorWheel *hairColorSelector = new ng::ColorWheel(colorPanel);
     hairColorSelector->setCallback([](ng::Color color) {
-      hairGroup->setCoreHairColor(color.x(), color.y(), color.z());
+      hairGroup->setHairColor(color.x(), color.y(), color.z());
     });
 
-    ng::Label *colorLabel1 = new ng::Label(colorPanel, "Hair Color");
-    colorLabel1->setFontSize(FONTSZ);
-    ng::ColorWheel *hairColorSelector1 = new ng::ColorWheel(colorPanel);
-    hairColorSelector1->setCallback([](ng::Color color) {
-      hairGroup->setHairColor(color.x(), color.y(), color.z());
+    ng::Widget *colorHighlightPanel = new ng::Widget(animator);
+    colorHighlightPanel->setLayout(new ng::BoxLayout(ng::Orientation::Vertical, ng::Alignment::Minimum, 10, 0));
+
+    ng::Button *highlightHairCore = new ng::Button(colorHighlightPanel, "Highlight Core Hair");
+    highlightHairCore->setCallback([highlightHairCore]() {
+      hairGroup->toggleHighlight();
+      highlightHairCore->setCaption( hairGroup->highlightCore ? "Resume" : "Highlight Core Hair");
     });
 
 

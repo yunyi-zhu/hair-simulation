@@ -17,12 +17,13 @@ public:
   void step(TimeStepper* timeStepper, float h);
   void setHairCurve(float l_input);
   void toggleWind();
+  void toggleHighlight();
   void setWindStrength(float strength);
   void setWindDirection(float index);
-  void setCoreHairColor(float r, float g, float b);
   void setHairColor(float r, float g, float b);
 
   bool windBlowing;
+  bool highlightCore;
 
 private:
   int indexOf(int h, int w);

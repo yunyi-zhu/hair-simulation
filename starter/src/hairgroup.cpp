@@ -104,6 +104,7 @@ HairGroup::HairGroup() {
   }
 
   windBlowing = false;
+  highlightCore = false;
 }
 
 void HairGroup::draw(GLProgram& gl, VertexRecorder curveRec, VertexRecorder surfaceRec) {
@@ -161,14 +162,20 @@ void HairGroup::setWindDirection(float index) {
   }
 }
 
-void HairGroup::setCoreHairColor(float r, float g, float b) {
+void HairGroup::toggleHighlight() {
+  int H = hairs.size();
+  for (int i = 0; i < H; i++) {
+    hairs[i].toggleHighlight();
+  }
+  highlightCore = !highlightCore;
+}
+
+void HairGroup::setHairColor(float r, float g, float b) {
   int H = hairs.size();
   for (int i = 0; i < H; i++) {
     hairs[i].setHairColor(r, g, b);
   }
-}
 
-void HairGroup::setHairColor(float r, float g, float b) {
   int H2 = symhairs.size();
   for (int i = 0; i < H2; i++) {
     symhairs[i].setHairColor(r, g, b);

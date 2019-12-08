@@ -53,6 +53,8 @@ HairSystem::HairSystem(Vector3f origin, int length)
   windStrength = 7.0f;
 
   hairColor = Vector3f(0.642589, 0.347272, 0.211211);
+  tempColor = hairColor;
+  highlightCore = false;
 }
 
 std::vector<Vector3f> HairSystem::evalF(std::vector<Vector3f> state)
@@ -138,6 +140,16 @@ void HairSystem::setHairCurve(float l_input) {
 
 void HairSystem::toggleWind() {
   windBlowing = !windBlowing;
+}
+
+void HairSystem::toggleHighlight() {
+  highlightCore = !highlightCore;
+  if (highlightCore) {
+    tempColor = hairColor;
+    setHairColor(1, 0, 0);
+  } else {
+    setHairColor(tempColor[0], tempColor[1], tempColor[2]);
+  }
 }
 
 void HairSystem::setWindStrength(float strength) {
